@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="Spinbits\SyliusBaselinkerPlugin\Controller\BaselinkerConnectorController" autowire="true" autoconfigure="true" public="true" />
+
+        <service id="Spinbits\SyliusBaselinkerPlugin\Handler\FileVersionActionHandler" autowire="true" autoconfigure="true"/>
+        <service id="Spinbits\SyliusBaselinkerPlugin\Handler\OrderAddActionHandler" autowire="true" autoconfigure="true"/>
+        <service id="Spinbits\SyliusBaselinkerPlugin\Handler\OrderUpdateActionHandler" autowire="true" autoconfigure="true"/>
+        <service id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductPricesActionHandler" autowire="true" autoconfigure="true"/>
+        <service id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductQuantityActionHandler" autowire="true" autoconfigure="true"/>
+        <service id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductsCategoriesActionHandler" autowire="true" autoconfigure="true"/>
+        <service id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductsDetailsActionHandler" autowire="true" autoconfigure="true"/>
+        <service id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductsListActionHandler" autowire="true" autoconfigure="true"/>
+        <service id="Spinbits\SyliusBaselinkerPlugin\Handler\StatusesListActionHandler" autowire="true" autoconfigure="true"/>
+        <service id="Spinbits\SyliusBaselinkerPlugin\Handler\SupportedMethodsActionHandler" autowire="true" autoconfigure="true"/>
+
+
+        <service id="Spinbits\BaselinkerSdk\RequestHandler" autowire="true" autoconfigure="true">
+            <call method="registerHandler">
+                <argument type="string" id="FileVersion" />
+                <argument type="service" id="Spinbits\SyliusBaselinkerPlugin\Handler\FileVersionActionHandler" />
+            </call>
+            <call method="registerHandler">
+                <argument type="string" id="OrderAdd" />
+                <argument type="service" id="Spinbits\SyliusBaselinkerPlugin\Handler\OrderAddActionHandler" />
+            </call>
+            <call method="registerHandler">
+                <argument type="string" id="OrderUpdate" />
+                <argument type="service" id="Spinbits\SyliusBaselinkerPlugin\Handler\OrderUpdateActionHandler" />
+            </call>
+            <call method="registerHandler">
+                <argument type="string" id="ProductPrices" />
+                <argument type="service" id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductPricesActionHandler" />
+            </call>
+            <call method="registerHandler">
+                <argument type="string" id="ProductQuantity" />
+                <argument type="service" id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductQuantityActionHandler" />
+            </call>
+            <call method="registerHandler">
+                <argument type="string" id="ProductsCategories" />
+                <argument type="service" id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductsCategoriesActionHandler" />
+            </call>
+            <call method="registerHandler">
+                <argument type="string" id="ProductsDetails" />
+                <argument type="service" id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductsDetailsActionHandler" />
+            </call>
+            <call method="registerHandler">
+                <argument type="string" id="ProductsList" />
+                <argument type="service" id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductsListActionHandler" />
+            </call>
+            <call method="registerHandler">
+                <argument type="string" id="StatusesList" />
+                <argument type="service" id="Spinbits\SyliusBaselinkerPlugin\Handler\StatusesListActionHandler" />
+            </call>
+            <call method="registerHandler">
+                <argument type="string" id="SupportedMethods" />
+                <argument type="service" id="Spinbits\SyliusBaselinkerPlugin\Handler\SupportedMethodsActionHandler" />
+            </call>
+        </service>
+    </services>
+</container>

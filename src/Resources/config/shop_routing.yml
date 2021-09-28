@@ -1,0 +1,6 @@
+# Delete these routes and define your own shop routes here
+
+spinbits_sylius_baselinker_connector:
+    path: /baselinker-connector
+    defaults:
+        _controller: Spinbits\SyliusBaselinkerPlugin\Controller\BaselinkerConnectorController::connectorAction

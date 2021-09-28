@@ -1,0 +1,4 @@
+suites:
+    main:
+        namespace: Spinbits\SyliusBaselinkerPlugin
+        psr4_prefix: Spinbits\SyliusBaselinkerPlugin
