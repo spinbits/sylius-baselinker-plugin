@@ -2,9 +2,10 @@
 
 default:
     suites:
-        greeting_customer:
+        baselinker_connector:
             contexts:
-                - acme_sylius_example.context.ui.shop.welcome
+                - sylius.behat.context.hook.doctrine_orm
+                - spinbits_sylius_baselinker_plugin.context.api.baselinker_connector
 
             filters:
-                tags: "@greeting_customer"
+                tags: "@baselinker_connector"

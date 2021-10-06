@@ -16,8 +16,8 @@ use SM\Factory\Factory as StateMachineFactory;
 use Spinbits\BaselinkerSdk\Model\OrderUpdateModel;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\OrderRepository;
 use Sylius\Component\Core\Model\OrderInterface;
+use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Order\OrderTransitions;
-use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Webmozart\Assert\Assert;
 
@@ -41,25 +41,25 @@ class OrderUpdateService
     {
         $orders = [];
         foreach ($inputData->getOrdersIds() as $orderId) {
-            $orders[] = $this->handleExistingOrder($orderId, $inputData);
+            /** @var OrderInterface|null $order */
+            $order = $this->orderRepository->find($orderId);
+            Assert::isInstanceOf($order, OrderInterface::class, sprintf("Order %s was not found", $orderId));
+
+            $orders[] = $this->updateOrder($order, $inputData);
         }
 
         return $orders;
     }
 
 
-    private function handleExistingOrder(string $orderId, OrderUpdateModel $inputData)
+    private function updateOrder(OrderInterface $order, OrderUpdateModel $inputData)
     {
-        /** @var OrderInterface|null $order */
-        $order = $this->orderRepository->find($orderId);
-        Assert::isInstanceOf($order, OrderInterface::class, sprintf("Order %s was not found", $orderId));
-
         switch ($inputData->getUpdateType()) {
             case "paid":
-                $this->markPayment($order, (bool) $inputData->getUpdateValue());
+                $this->setComplete($order->getLastPayment(), (bool) $inputData->getUpdateValue());
                 break;
             case "status":
-                $this->markOrderStatus($order, $inputData->getUpdateValue());
+                $this->updateOrderStatus($order, $inputData->getUpdateValue());
                 break;
             default:
                 // do nothing
@@ -70,17 +70,19 @@ class OrderUpdateService
     }
 
 
-    private function markPayment(OrderInterface $order, bool $paid): void
+    private function setComplete(PaymentInterface $payment, bool $paid): void
     {
-        $paymentStateMachine = $this->stateMachineFactory->get($order->getLastPayment(), PaymentTransitions::GRAPH);
-        if ($paid && $order->getLastPayment()->getState() !== PaymentInterface::STATE_COMPLETED) {
-            if ($paymentStateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {
-                $paymentStateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
-            }
+        if (false === $paid) {
+            return;
+        }
+
+        $paymentStateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
+        if ($paymentStateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {
+            $paymentStateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
         }
     }
 
-    private function markOrderStatus(OrderInterface $order, string $updateValue): void
+    private function updateOrderStatus(OrderInterface $order, string $updateValue): void
     {
         $orderStateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);
 

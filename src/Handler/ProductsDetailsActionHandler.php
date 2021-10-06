@@ -10,34 +10,34 @@ declare(strict_types=1);
 
 namespace Spinbits\SyliusBaselinkerPlugin\Handler;
 
-use Spinbits\BaselinkerSdk\Handler\Sylius\Repository\BaseLinkerProductRepositoryInterface;
-use Spinbits\BaselinkerSdk\Handler\Sylius\Mapper\ProductMapper;
+use Spinbits\SyliusBaselinkerPlugin\Repository\BaseLinkerProductRepositoryInterface;
+use Spinbits\SyliusBaselinkerPlugin\Mapper\ProductMapper;
 use Spinbits\BaselinkerSdk\Filter\ProductDetailsFilter;
 use Spinbits\BaselinkerSdk\Handler\HandlerInterface;
 use Spinbits\BaselinkerSdk\Rest\Input;
-use Sylius\Component\Core\Model\ChannelInterface;
+use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ProductInterface;
 
 class ProductsDetailsActionHandler implements HandlerInterface
 {
     private ProductMapper $mapper;
     private BaseLinkerProductRepositoryInterface $productRepository;
-    private ChannelInterface $channel;
+    private ChannelContextInterface $channelContext;
 
     public function __construct(
         ProductMapper $mapper,
         BaseLinkerProductRepositoryInterface $productRepository,
-        ChannelInterface $channel
+        ChannelContextInterface $channelContext
     ) {
         $this->mapper = $mapper;
         $this->productRepository = $productRepository;
-        $this->channel = $channel;
+        $this->channelContext = $channelContext;
     }
 
     public function handle(Input $input): array
     {
         $filter = new ProductDetailsFilter($input);
-        $filter->setCustomFilter('channel_code', $this->channel->getCode());
+        $filter->setCustomFilter('channel_code', $this->channelContext->getChannel()->getCode());
 
         /** @var ProductInterface[] $paginator */
         $paginator = $this->productRepository->fetchBaseLinkerDetailedData($filter);

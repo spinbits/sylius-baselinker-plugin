@@ -38,12 +38,13 @@ class OrderAddActionHandler implements HandlerInterface
      */
     public function handle(Input $input): array
     {
-        $input = new OrderAddModel($input);
+        $orderAddModel = new OrderAddModel($input);
 
-        $result = $this->validator->validate($input);
+        $result = $this->validator->validate($orderAddModel);
         $this->assertIsValid($result);
 
-        $order = $this->orderCreateService->createOrder($input);
+        $order = $this->orderCreateService->createOrder($orderAddModel);
+        //$order->setBaselinkerOrderId((string) $orderAddModel->getBaselinkerId());
 
         return ['order_id' => $order->getId()];
     }

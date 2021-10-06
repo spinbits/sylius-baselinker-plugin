@@ -34,7 +34,7 @@ trait ProductsRepositoryTrait
         $queryBuilder->andWhere('o.enabled = true');
         $this->applyFilters($queryBuilder, $filter);
 
-        return $this->getPaginator($filter, $queryBuilder);
+        return $this->appendPaginator($filter, $queryBuilder);
     }
 
     public function fetchBaseLinkerDetailedData(ProductDetailsFilter $filter): PagerfantaInterface
@@ -42,14 +42,14 @@ trait ProductsRepositoryTrait
         $queryBuilder = $this->prepareBaseLinkerQueryBuilder($filter);
         $this->filterByIds($queryBuilder, $filter->getIds());
 
-        return $this->getPaginator($filter, $queryBuilder);
+        return $this->appendPaginator($filter, $queryBuilder);
     }
 
     public function fetchBaseLinkerPriceData(PageOnlyFilter $filter): PagerfantaInterface {
         $queryBuilder = $this->prepareBaseLinkerQueryBuilder($filter);
         $queryBuilder->andWhere('o.enabled = true');
 
-        return $this->getPaginator($filter, $queryBuilder);
+        return $this->appendPaginator($filter, $queryBuilder);
     }
 
     public function fetchBaseLinkerQuantityData(PageOnlyFilter $filter): PagerfantaInterface
@@ -66,9 +66,11 @@ trait ProductsRepositoryTrait
             ->leftJoin('o.channels', 'channel')
             ->andWhere('channel.code = :defaultChannelCode')
             ->setParameter('defaultChannelCode', $filter->getCustomFilter('channel_code'));
+
+        return $queryBuilder;
     }
 
-    private function getPaginator(PaginatorFilterInterface $filter, QueryBuilder $queryBuilder): PagerfantaInterface
+    private function appendPaginator(PaginatorFilterInterface $filter, QueryBuilder $queryBuilder): PagerfantaInterface
     {
         $paginator = new Pagerfanta(new QueryAdapter($queryBuilder));
         $paginator->setNormalizeOutOfRangePages(true);

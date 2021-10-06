@@ -3,14 +3,10 @@
 <container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <defaults public="true" />
-        <!-- Put your Behat services here -->
-
-        <service id="acme_sylius_example.context.ui.shop.welcome" class="Tests\Spinbits\SyliusBaselinkerPlugin\Behat\Context\Ui\Shop\WelcomeContext">
-            <argument type="service" id="acme_sylius_example.page.shop.static_welcome" />
-            <argument type="service" id="acme_sylius_example.page.shop.dynamic_welcome" />
+        <service id="spinbits_sylius_baselinker_plugin.context.api.baselinker_connector" class="Tests\Spinbits\SyliusBaselinkerPlugin\Behat\Context\Api\BaselinkerConnectorContext">
+            <argument key="$connectorPage" type="service" id="spinbits_sylius_baselinker_plugin.page.shop.baselinker_connector" />
         </service>
 
-        <service id="acme_sylius_example.page.shop.static_welcome" class="Tests\Spinbits\SyliusBaselinkerPlugin\Behat\Page\Shop\StaticWelcomePage" parent="sylius.behat.symfony_page" public="false" />
-        <service id="acme_sylius_example.page.shop.dynamic_welcome" class="Tests\Spinbits\SyliusBaselinkerPlugin\Behat\Page\Shop\DynamicWelcomePage" parent="sylius.behat.symfony_page" public="false" />
+        <service id="spinbits_sylius_baselinker_plugin.page.shop.baselinker_connector" class="Tests\Spinbits\SyliusBaselinkerPlugin\Behat\Page\Shop\BaslinkerConnectorPage" parent="sylius.behat.symfony_page" public="false" />
     </services>
 </container>

@@ -10,16 +10,15 @@ declare(strict_types=1);
 
 namespace Spinbits\SyliusBaselinkerPlugin\Mapper;
 
+use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductVariantInterface;
-use Sylius\Component\Core\Model\ChannelInterface;
-use Sylius\Component\Core\Model\ChannelPricingInterface;
 
 class ListProductMapper
 {
-    private ChannelInterface $channel;
+    private ChannelContextInterface $channel;
 
-    public function __construct(ChannelInterface $channel)
+    public function __construct(ChannelContextInterface $channel)
     {
         $this->channel = $channel;
     }
@@ -39,7 +38,7 @@ class ListProductMapper
 
     private function getPrice(ProductVariantInterface $productVariant): float
     {
-        $pricing = $productVariant->getChannelPricingForChannel($this->channel);
+        $pricing = $productVariant->getChannelPricingForChannel($this->channel->getChannel());
         if (null === $pricing) {
             return 0;
         }

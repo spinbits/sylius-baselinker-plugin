@@ -13,24 +13,24 @@ namespace Spinbits\SyliusBaselinkerPlugin\Service;
 
 use Spinbits\BaselinkerSdk\Model\OrderAddModel;
 use Spinbits\BaselinkerSdk\Model\ProductModel;
+use Sylius\Component\Channel\Context\ChannelContextInterface;
+use Sylius\Component\Core\Factory\CartItemFactoryInterface;
 use Sylius\Component\Core\Model\Address;
 use SM\Factory\Factory as StateMachineFactory;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\CustomerRepository;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\OrderRepository;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\ProductVariantRepository;
-use Sylius\Component\Channel\Context\CachedPerRequestChannelContext;
-use Sylius\Component\Core\Cart\Modifier\LimitingOrderItemQuantityModifier;
-use Sylius\Component\Core\Currency\Context\ChannelAwareCurrencyContext;
-use Sylius\Component\Core\Factory\CartItemFactory;
 use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Component\Core\Model\OrderItemInterface;
 use Sylius\Component\Core\Model\PaymentMethod;
 use Sylius\Component\Core\Model\ProductVariantInterface;
 use Sylius\Component\Core\OrderCheckoutTransitions;
-use Sylius\Component\Locale\Context\CompositeLocaleContext;
+use Sylius\Component\Currency\Context\CurrencyContextInterface;
+use Sylius\Component\Locale\Context\LocaleContextInterface;
 use Sylius\Component\Order\Model\OrderInterface;
-use Sylius\Component\Order\Processor\CompositeOrderProcessor;
-use Sylius\Component\Payment\Factory\PaymentFactory;
+use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
+use Sylius\Component\Payment\Factory\PaymentFactoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
@@ -40,37 +40,37 @@ use Webmozart\Assert\Assert;
 class OrderCreateService
 {
     private Factory $orderFactory;
-    private CartItemFactory $orderItemFactory;
+    private CartItemFactoryInterface $orderItemFactory;
     private Factory $customerFactory;
     private CustomerRepository $customerRepository;
     private OrderRepository $orderRepository;
     private ProductVariantRepository $productVariantRepository;
-    private CompositeLocaleContext $localeContext;
-    private ChannelAwareCurrencyContext $currencyContext;
-    private LimitingOrderItemQuantityModifier $orderItemQuantityModifier;
-    private CompositeOrderProcessor $orderProcessor;
-    private CachedPerRequestChannelContext $channelContext;
+    private LocaleContextInterface $localeContext;
+    private CurrencyContextInterface $currencyContext;
+    private OrderItemQuantityModifierInterface $orderItemQuantityModifier;
+    private OrderProcessorInterface $orderProcessor;
+    private ChannelContextInterface $channelContext;
     private StateMachineFactory $stateMachineFactory;
-    private PaymentFactory $paymentFactory;
+    private PaymentFactoryInterface $paymentFactory;
     private PaymentMethodRepositoryInterface $paymentMethodRepository;
     private ?string $paymentMethodCode = null;
 
     public function __construct(
         Factory $orderFactory,
-        CartItemFactory $orderItemFactory,
+        CartItemFactoryInterface $orderItemFactory,
         Factory $customerFactory,
-        PaymentFactory $paymentFactory,
+        PaymentFactoryInterface $paymentFactory,
         CustomerRepository $customerRepository,
         OrderRepository $orderRepository,
         ProductVariantRepository $productVariantRepository,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
-        CompositeLocaleContext $localeContext,
-        ChannelAwareCurrencyContext $currencyContext,
-        CachedPerRequestChannelContext $channelContext,
-        LimitingOrderItemQuantityModifier $orderItemQuantityModifier,
-        CompositeOrderProcessor $orderProcessor,
+        LocaleContextInterface $localeContext,
+        CurrencyContextInterface $currencyContext,
+        ChannelContextInterface $channelContext,
+        OrderItemQuantityModifierInterface $orderItemQuantityModifier,
+        OrderProcessorInterface $orderProcessor,
         StateMachineFactory $stateMachineFactory,
-        ?string $paymentMethodCode
+        ?string $paymentMethodCode = null
     ) {
         $this->orderFactory = $orderFactory;
         $this->orderItemFactory = $orderItemFactory;
@@ -92,72 +92,69 @@ class OrderCreateService
         }
     }
 
-    public function createOrder(OrderAddModel $inputData): OrderInterface
+    public function createOrder(OrderAddModel $orderAddModel): OrderInterface
     {
-        Assert::notNull($inputData->getBaselinkerId(), sprintf("BaselinkerId can not be empty."));
+        Assert::notNull($orderAddModel->getBaselinkerId(), sprintf("BaselinkerId can not be empty."));
 
         /* @var $order OrderInterface */
-        $order = $this->orderRepository->findOneBy(['externalOrderId' => $inputData->getBaselinkerId()]);
+        //$order = $this->orderRepository->findOneBy(['baselinkerOrderId' => $orderAddModel->getBaselinkerId()]);
+        $order = null;
         if (null === $order) {
             $order = $this->orderFactory->createNew();
 
-            $order->setExternalOrderId((string) $inputData->getBaselinkerId());
-            $order->markExternal();
-            $order->fillBaseLinkerMetadata($inputData->getCurrency());
-
-            $customer = $this->getCustomer($inputData);
-            $address = $this->getAddress($inputData, $customer);
-            $payment = $this->getPayment($this->paymentMethodCode, $order->getCurrencyCode());
-
-            $order->setCustomer($customer);
             $order->setChannel($this->channelContext->getChannel());
             $order->setLocaleCode($this->localeContext->getLocaleCode());
             $order->setCurrencyCode($this->currencyContext->getCurrencyCode());
 
+            $customer = $this->getCustomer($orderAddModel);
+            $address = $this->getAddress($orderAddModel, $customer);
+            $payment = $this->getPayment($this->paymentMethodCode, $order->getCurrencyCode());
+
+            $order->setCustomer($customer);
             $order->setShippingAddress($address);
             $order->setBillingAddress(clone $address);
+            $order->addPayment($payment);
 
-            foreach ($inputData->getProducts() as $product) {
+            foreach ($orderAddModel->getProducts() as $product) {
                 $orderItem = $this->getOrderItem($product);
                 $order->addItem($orderItem);
             }
             $this->orderProcessor->process($order);
 
-            $order->addPayment($payment);
             $this->orderRepository->add($order);
             $this->checkout($order);
         }
 
-        $this->markPayment($order, (bool) $inputData->getPaid());
+        $this->markPayment($order, (bool) $orderAddModel->getPaid());
         $this->orderRepository->add($order);
 
         return $order;
     }
 
-    private function getCustomer(OrderAddModel $inputData): CustomerInterface
+    private function getCustomer(OrderAddModel $orderAddModel): CustomerInterface
     {
-        $customer = $this->customerRepository->findOneBy(['email' => $inputData->getEmail()]);
+        $customer = $this->customerRepository->findOneBy(['email' => $orderAddModel->getEmail()]);
         if (null === $customer) {
             $customer = $this->customerFactory->createNew();
             /* @var $customer CustomerInterface */
-            $customer->setEmail($inputData->getEmail());
-            $customer->setPhoneNumber($inputData->getPhone());
+            $customer->setEmail($orderAddModel->getEmail());
+            $customer->setPhoneNumber($orderAddModel->getPhone());
         }
 
         return $customer;
     }
 
-    private function getAddress(OrderAddModel $inputData, CustomerInterface $customer): Address
+    private function getAddress(OrderAddModel $orderAddModel, CustomerInterface $customer): Address
     {
         $address = new Address();
-        $address->setFirstName($inputData->getDeliveryFullname() ?? "");
+        $address->setFirstName($orderAddModel->getDeliveryFullname() ?? "");
         $address->setLastName("");
         $address->setPostcode("");
         $address->setCustomer($customer);
-        $address->setPhoneNumber($inputData->getPhone() ?? "");
-        $address->setStreet($inputData->getDeliveryAddress() ?? "");
-        $address->setCity($inputData->getDeliveryCity() ?? "");
-        $address->setCountryCode($inputData->getDeliveryCountryCode() ?? "");
+        $address->setPhoneNumber($orderAddModel->getPhone() ?? "");
+        $address->setStreet($orderAddModel->getDeliveryAddress() ?? "");
+        $address->setCity($orderAddModel->getDeliveryCity() ?? "");
+        $address->setCountryCode($orderAddModel->getDeliveryCountryCode() ?? "");
 
         return $address;
     }
@@ -166,6 +163,7 @@ class OrderCreateService
     {
         /** @var ProductVariantInterface|null $variant */
         $variant = $this->productVariantRepository->find($product->getVariantId());
+
         $message = sprintf("Product variant with %s id was not found!", $product->getVariantId());
         Assert::isInstanceOf($variant, ProductVariantInterface::class, $message);
 
@@ -176,8 +174,9 @@ class OrderCreateService
         return $orderItem;
     }
 
-    private function getPayment(string $paymentMethodCode, string $currencyCode ): PaymentInterface
+    private function getPayment(string $paymentMethodCode, string $currencyCode): PaymentInterface
     {
+        /** @var PaymentMethod $paymentMethod */
         $paymentMethod = $this->paymentMethodRepository->findOneBy(['code' => $paymentMethodCode]);
         $payment = $this->paymentFactory->createNew();
         $payment->setMethod($paymentMethod);
@@ -190,17 +189,22 @@ class OrderCreateService
     {
         $stateMachine = $this->stateMachineFactory->get($order, OrderCheckoutTransitions::GRAPH);
         $stateMachine->apply(OrderCheckoutTransitions::TRANSITION_ADDRESS);
+        $stateMachine->apply(OrderCheckoutTransitions::TRANSITION_SKIP_SHIPPING);
+        $stateMachine->apply(OrderCheckoutTransitions::TRANSITION_SELECT_PAYMENT);
         if ($stateMachine->can(OrderCheckoutTransitions::TRANSITION_COMPLETE)) {
             $stateMachine->apply(OrderCheckoutTransitions::TRANSITION_COMPLETE);
         }
     }
 
-    private function markPayment(OrderInterface $order, bool $paid): void {
+    private function markPayment(OrderInterface $order, bool $paid): void
+    {
+        if (false === $paid) {
+            return;
+        }
+
         $paymentStateMachine = $this->stateMachineFactory->get($order->getLastPayment(), PaymentTransitions::GRAPH);
-        if ($paid && $order->getLastPayment()->getState() !== PaymentInterface::STATE_COMPLETED) {
-            if ($paymentStateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {
-                $paymentStateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
-            }
+        if ($paymentStateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {
+            $paymentStateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
         }
     }
 
@@ -208,6 +212,7 @@ class OrderCreateService
     {
         /** @var PaymentMethod[] $paymentMethods */
         $paymentMethods = $this->paymentMethodRepository->findAll();
+        Assert::keyExists($paymentMethods, 0, 'No payment method configured.');
         return $paymentMethods[0]->getCode();
     }
 }
