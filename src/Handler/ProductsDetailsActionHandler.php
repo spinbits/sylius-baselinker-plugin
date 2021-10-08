@@ -16,6 +16,7 @@ use Spinbits\BaselinkerSdk\Filter\ProductDetailsFilter;
 use Spinbits\BaselinkerSdk\Handler\HandlerInterface;
 use Spinbits\BaselinkerSdk\Rest\Input;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
+use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ProductInterface;
 
 class ProductsDetailsActionHandler implements HandlerInterface
@@ -39,16 +40,38 @@ class ProductsDetailsActionHandler implements HandlerInterface
         $filter = new ProductDetailsFilter($input);
         $filter->setCustomFilter('channel_code', $this->channelContext->getChannel()->getCode());
 
-        /** @var ProductInterface[] $paginator */
+        $channelCode = (string) $this->channelContext->getChannel()->getCode();
         $paginator = $this->productRepository->fetchBaseLinkerDetailedData($filter);
 
         $return = [];
         foreach ($paginator as $product) {
-            foreach ($this->mapper->map($product) as $variant) {
+            $channel = $this->getProductChannel($product, $channelCode);
+            if ($channel === null) {
+                continue;
+            }
+            foreach ($this->mapper->map($product, $channel) as $variant) {
                 $return[$product->getId()] = $variant;
             }
         }
         $return['pages'] = $paginator->getNbPages();
         return $return;
+    }
+
+    /**
+     * @param ProductInterface $product
+     * @param string $channelCode
+     *
+     * @return ChannelInterface|null
+     */
+    private function getProductChannel(ProductInterface $product, string $channelCode): ?ChannelInterface
+    {
+        /** @var ChannelInterface $channel */
+        foreach ($product->getChannels() as $channel) {
+            if ($channel->getCode() === $channelCode) {
+                return $channel;
+            }
+        }
+
+        return null;
     }
 }

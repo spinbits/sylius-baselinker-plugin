@@ -48,6 +48,6 @@ class ProductsCategoriesActionHandler implements HandlerInterface
      */
     private function canHandle(TaxonInterface $taxon): bool
     {
-        return $taxon->isEnabled() && !in_array($taxon->getCode(), self::BLACK_LIST);
+        return $taxon->isEnabled() && !in_array($taxon->getCode(), self::BLACK_LIST, true);
     }
 }

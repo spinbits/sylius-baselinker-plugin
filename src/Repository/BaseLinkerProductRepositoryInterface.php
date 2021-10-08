@@ -11,18 +11,18 @@ declare(strict_types=1);
 
 namespace Spinbits\SyliusBaselinkerPlugin\Repository;
 
-use Pagerfanta\PagerfantaInterface;
+use Pagerfanta\Pagerfanta;
 use Spinbits\BaselinkerSdk\Filter\PageOnlyFilter;
 use Spinbits\BaselinkerSdk\Filter\ProductDetailsFilter;
 use Spinbits\BaselinkerSdk\Filter\ProductListFilter;
 
 interface BaseLinkerProductRepositoryInterface
 {
-    public function fetchBaseLinkerData(ProductListFilter $filter): PagerfantaInterface;
+    public function fetchBaseLinkerData(ProductListFilter $filter): Pagerfanta;
 
-    public function fetchBaseLinkerPriceData(PageOnlyFilter $filter): PagerfantaInterface;
+    public function fetchBaseLinkerPriceData(PageOnlyFilter $filter): Pagerfanta;
 
-    public function fetchBaseLinkerQuantityData(PageOnlyFilter $filter): PagerfantaInterface;
+    public function fetchBaseLinkerQuantityData(PageOnlyFilter $filter): Pagerfanta;
 
-    public function fetchBaseLinkerDetailedData(ProductDetailsFilter $filter): PagerfantaInterface;
+    public function fetchBaseLinkerDetailedData(ProductDetailsFilter $filter): Pagerfanta;
 }

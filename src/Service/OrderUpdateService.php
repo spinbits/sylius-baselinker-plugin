@@ -52,11 +52,18 @@ class OrderUpdateService
     }
 
 
-    private function updateOrder(OrderInterface $order, OrderUpdateModel $inputData)
+    private function updateOrder(OrderInterface $order, OrderUpdateModel $inputData): OrderInterface
     {
         switch ($inputData->getUpdateType()) {
             case "paid":
-                $this->setComplete($order->getLastPayment(), (bool) $inputData->getUpdateValue());
+                /** @var PaymentInterface|null $lastPayment */
+                $lastPayment = $order->getLastPayment();
+                if ($lastPayment === null) {
+                    throw new \RuntimeException("Missing payment for order: " . $order->getId());
+                }
+
+                /** @var PaymentInterface $lastPayment */
+                $this->setComplete($lastPayment, (bool) $inputData->getUpdateValue());
                 break;
             case "status":
                 $this->updateOrderStatus($order, $inputData->getUpdateValue());

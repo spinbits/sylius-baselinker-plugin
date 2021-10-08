@@ -20,13 +20,16 @@ use SM\Factory\Factory as StateMachineFactory;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\CustomerRepository;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\OrderRepository;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\ProductVariantRepository;
+use Sylius\Component\Core\Model\Customer;
 use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Component\Core\Model\OrderItemInterface;
+use Sylius\Component\Core\Model\Payment;
 use Sylius\Component\Core\Model\PaymentMethod;
 use Sylius\Component\Core\Model\ProductVariantInterface;
 use Sylius\Component\Core\OrderCheckoutTransitions;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
+use Sylius\Component\Core\Model\Order;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -97,9 +100,9 @@ class OrderCreateService
         Assert::notNull($orderAddModel->getBaselinkerId(), sprintf("BaselinkerId can not be empty."));
 
         /* @var $order OrderInterface */
-        //$order = $this->orderRepository->findOneBy(['baselinkerOrderId' => $orderAddModel->getBaselinkerId()]);
-        $order = null;
+        $order = $this->orderRepository->findOneBy(['baselinkerOrderId' => $orderAddModel->getBaselinkerId()]);
         if (null === $order) {
+            /** @var Order $order */
             $order = $this->orderFactory->createNew();
 
             $order->setChannel($this->channelContext->getChannel());
@@ -108,17 +111,21 @@ class OrderCreateService
 
             $customer = $this->getCustomer($orderAddModel);
             $address = $this->getAddress($orderAddModel, $customer);
-            $payment = $this->getPayment($this->paymentMethodCode, $order->getCurrencyCode());
+            $payment = $this->getPayment((string) $this->paymentMethodCode, (string) $order->getCurrencyCode());
 
             $order->setCustomer($customer);
             $order->setShippingAddress($address);
             $order->setBillingAddress(clone $address);
             $order->addPayment($payment);
 
-            foreach ($orderAddModel->getProducts() as $product) {
-                $orderItem = $this->getOrderItem($product);
-                $order->addItem($orderItem);
+            $modelProducts = $orderAddModel->getProducts();
+            if ($modelProducts !== null) {
+                foreach ($modelProducts as $product) {
+                    $orderItem = $this->getOrderItem($product);
+                    $order->addItem($orderItem);
+                }
             }
+
             $this->orderProcessor->process($order);
 
             $this->orderRepository->add($order);
@@ -135,8 +142,8 @@ class OrderCreateService
     {
         $customer = $this->customerRepository->findOneBy(['email' => $orderAddModel->getEmail()]);
         if (null === $customer) {
+            /** @var CustomerInterface $customer*/
             $customer = $this->customerFactory->createNew();
-            /* @var $customer CustomerInterface */
             $customer->setEmail($orderAddModel->getEmail());
             $customer->setPhoneNumber($orderAddModel->getPhone());
         }
@@ -167,6 +174,7 @@ class OrderCreateService
         $message = sprintf("Product variant with %s id was not found!", $product->getVariantId());
         Assert::isInstanceOf($variant, ProductVariantInterface::class, $message);
 
+        /** @var OrderItemInterface $orderItem */
         $orderItem = $this->orderItemFactory->createNew();
         $orderItem->setVariant($variant);
         $this->orderItemQuantityModifier->modify($orderItem, $product->getQuantity());
@@ -178,6 +186,7 @@ class OrderCreateService
     {
         /** @var PaymentMethod $paymentMethod */
         $paymentMethod = $this->paymentMethodRepository->findOneBy(['code' => $paymentMethodCode]);
+        /** @var Payment $payment */
         $payment = $this->paymentFactory->createNew();
         $payment->setMethod($paymentMethod);
         $payment->setCurrencyCode($currencyCode);
@@ -198,11 +207,19 @@ class OrderCreateService
 
     private function markPayment(OrderInterface $order, bool $paid): void
     {
+        /** @var Order $order */
         if (false === $paid) {
             return;
         }
 
-        $paymentStateMachine = $this->stateMachineFactory->get($order->getLastPayment(), PaymentTransitions::GRAPH);
+        /** @var PaymentInterface|null $lastPayment */
+        $lastPayment = $order->getLastPayment();
+        if ($lastPayment === null) {
+            throw new \RuntimeException("Missing payment for order: " . $order->getId());
+        }
+
+        /** @var PaymentInterface $lastPayment */
+        $paymentStateMachine = $this->stateMachineFactory->get($lastPayment, PaymentTransitions::GRAPH);
         if ($paymentStateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {
             $paymentStateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
         }
@@ -213,6 +230,6 @@ class OrderCreateService
         /** @var PaymentMethod[] $paymentMethods */
         $paymentMethods = $this->paymentMethodRepository->findAll();
         Assert::keyExists($paymentMethods, 0, 'No payment method configured.');
-        return $paymentMethods[0]->getCode();
+        return (string) $paymentMethods[0]->getCode();
     }
 }

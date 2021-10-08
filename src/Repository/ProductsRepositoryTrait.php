@@ -19,7 +19,6 @@ use Spinbits\BaselinkerSdk\Filter\ProductListFilter;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Exception\LessThan1CurrentPageException;
 use Pagerfanta\Pagerfanta;
-use Pagerfanta\PagerfantaInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\QueryBuilder;
 
@@ -28,7 +27,7 @@ trait ProductsRepositoryTrait
     private bool $pricingsJoined = false;
     private bool $translationsJoined = false;
 
-    public function fetchBaseLinkerData(ProductListFilter $filter): PagerfantaInterface
+    public function fetchBaseLinkerData(ProductListFilter $filter): Pagerfanta
     {
         $queryBuilder = $this->prepareBaseLinkerQueryBuilder($filter);
         $queryBuilder->andWhere('o.enabled = true');
@@ -37,7 +36,7 @@ trait ProductsRepositoryTrait
         return $this->appendPaginator($filter, $queryBuilder);
     }
 
-    public function fetchBaseLinkerDetailedData(ProductDetailsFilter $filter): PagerfantaInterface
+    public function fetchBaseLinkerDetailedData(ProductDetailsFilter $filter): Pagerfanta
     {
         $queryBuilder = $this->prepareBaseLinkerQueryBuilder($filter);
         $this->filterByIds($queryBuilder, $filter->getIds());
@@ -45,14 +44,14 @@ trait ProductsRepositoryTrait
         return $this->appendPaginator($filter, $queryBuilder);
     }
 
-    public function fetchBaseLinkerPriceData(PageOnlyFilter $filter): PagerfantaInterface {
+    public function fetchBaseLinkerPriceData(PageOnlyFilter $filter): Pagerfanta {
         $queryBuilder = $this->prepareBaseLinkerQueryBuilder($filter);
         $queryBuilder->andWhere('o.enabled = true');
 
         return $this->appendPaginator($filter, $queryBuilder);
     }
 
-    public function fetchBaseLinkerQuantityData(PageOnlyFilter $filter): PagerfantaInterface
+    public function fetchBaseLinkerQuantityData(PageOnlyFilter $filter): Pagerfanta
     {
         return $this->fetchBaseLinkerPriceData($filter);
     }
@@ -70,7 +69,7 @@ trait ProductsRepositoryTrait
         return $queryBuilder;
     }
 
-    private function appendPaginator(PaginatorFilterInterface $filter, QueryBuilder $queryBuilder): PagerfantaInterface
+    private function appendPaginator(PaginatorFilterInterface $filter, QueryBuilder $queryBuilder): Pagerfanta
     {
         $paginator = new Pagerfanta(new QueryAdapter($queryBuilder));
         $paginator->setNormalizeOutOfRangePages(true);
@@ -87,22 +86,22 @@ trait ProductsRepositoryTrait
     private function applyFilters(QueryBuilder $queryBuilder, ProductListFilter $filter): void
     {
         if ($filter->hasId()) {
-            $this->filterById($queryBuilder, $filter->getId());
+            $this->filterById($queryBuilder, (string) $filter->getId());
         }
 
         if ($filter->hasPriceFrom()) {
-            $this->filterPriceFrom($queryBuilder, $filter->getPriceFrom());
+            $this->filterPriceFrom($queryBuilder, (float) $filter->getPriceFrom());
         }
 
         if ($filter->hasPriceTo()) {
-            $this->filterPriceTo($queryBuilder, $filter->getPriceTo());
+            $this->filterPriceTo($queryBuilder, (float) $filter->getPriceTo());
         }
         if ($filter->hasQuantityFrom()) {
-            $this->filterQuantityFrom($queryBuilder, $filter->getQuantityFrom());
+            $this->filterQuantityFrom($queryBuilder, (float) $filter->getQuantityFrom());
         }
 
         if ($filter->hasQuantityTo()) {
-            $this->filterQuantityTo($queryBuilder, $filter->getQuantityTo());
+            $this->filterQuantityTo($queryBuilder, (float) $filter->getQuantityTo());
         }
 
         if ($filter->hasIds()) {
@@ -146,7 +145,7 @@ trait ProductsRepositoryTrait
         $queryBuilder->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
     }
 
-    private function filterByCategory(QueryBuilder $queryBuilder, string $categoryCode)
+    private function filterByCategory(QueryBuilder $queryBuilder, string $categoryCode): void
     {
         $queryBuilder
             ->join('o.productTaxons', 'productTaxon')
@@ -164,24 +163,24 @@ trait ProductsRepositoryTrait
         $queryBuilder
             ->join('o.variants', 'productVariant')
             ->join('productVariant.channelPricings', 'pricing')
-            ->andwhere('pricing.channelCode = :defaultChannelCode');
+            ->andWhere('pricing.channelCode = :defaultChannelCode');
     }
 
-    private function filterQuantityTo(QueryBuilder $queryBuilder, float $getQuantityTo)
+    private function filterQuantityTo(QueryBuilder $queryBuilder, float $getQuantityTo): void
     {
         $this->joinPricings($queryBuilder);
         $queryBuilder->andWhere('productVariant.onHand <= :quantityTo');
         $queryBuilder->setParameter('quantityTo', $getQuantityTo);
     }
 
-    private function filterQuantityFrom(QueryBuilder $queryBuilder, float $getQuantityFrom)
+    private function filterQuantityFrom(QueryBuilder $queryBuilder, float $getQuantityFrom): void
     {
         $this->joinPricings($queryBuilder);
         $queryBuilder->andWhere('productVariant.onHand >= :quantityFrom');
         $queryBuilder->setParameter('quantityFrom', $getQuantityFrom);
     }
 
-    private function sort(QueryBuilder $queryBuilder, array $sort)
+    private function sort(QueryBuilder $queryBuilder, array $sort): void
     {
         switch ($sort[0] ?? null) {
             case 'name':
@@ -204,7 +203,7 @@ trait ProductsRepositoryTrait
         $queryBuilder->addOrderBy($field, $sort[1]??'ASC');
     }
 
-    private function joinTranslations(QueryBuilder $queryBuilder)
+    private function joinTranslations(QueryBuilder $queryBuilder): void
     {
         if ($this->translationsJoined) {
             return;

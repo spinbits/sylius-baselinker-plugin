@@ -17,13 +17,14 @@ use Spinbits\SyliusBaselinkerPlugin\Mapper\ListProductMapper;
 use Spinbits\BaselinkerSdk\Filter\ProductListFilter;
 use Spinbits\BaselinkerSdk\Rest\Input;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
+use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ProductInterface;
 
 class ProductsListActionHandler implements HandlerInterface
 {
     private ListProductMapper $mapper;
     private BaseLinkerProductRepositoryInterface $productRepository;
-    private ChannelContextInterface $channel;
+    private ChannelContextInterface $channelContext;
 
     public function __construct(
         ListProductMapper $mapper,
@@ -32,23 +33,46 @@ class ProductsListActionHandler implements HandlerInterface
     ) {
         $this->mapper = $mapper;
         $this->productRepository = $productRepository;
-        $this->channel = $channel;
+        $this->channelContext = $channel;
     }
 
     public function handle(Input $input): array
     {
         $filter = new ProductListFilter($input);
-        $filter->setCustomFilter('channel_code', $this->channel->getChannel()->getCode());
+        $filter->setCustomFilter('channel_code', $this->channelContext->getChannel()->getCode());
 
-        /** @var ProductInterface[] $paginator */
+        $channelCode = (string) $this->channelContext->getChannel()->getCode();
         $paginator = $this->productRepository->fetchBaseLinkerData($filter);
         $return = [];
         foreach ($paginator as $product) {
-            foreach ($this->mapper->map($product) as $variant) {
+            $channel = $this->getProductChannel($product, $channelCode);
+            if ($channel === null) {
+                continue;
+            }
+
+            foreach ($this->mapper->map($product, $channel) as $variant) {
                 $return[$product->getId()] = $variant;
             }
         }
         $return['pages'] = $paginator->getNbPages();
         return  $return;
+    }
+
+    /**
+     * @param ProductInterface $product
+     * @param string $channelCode
+     *
+     * @return ChannelInterface|null
+     */
+    private function getProductChannel(ProductInterface $product, string $channelCode): ?ChannelInterface
+    {
+        /** @var ChannelInterface $channel */
+        foreach ($product->getChannels() as $channel) {
+            if ($channel->getCode() === $channelCode) {
+                return $channel;
+            }
+        }
+
+        return null;
     }
 }

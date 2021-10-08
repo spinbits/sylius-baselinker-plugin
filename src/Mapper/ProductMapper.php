@@ -12,67 +12,69 @@ declare(strict_types=1);
 namespace Spinbits\SyliusBaselinkerPlugin\Mapper;
 
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
-use Sylius\Component\Attribute\Model\AttributeValueInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
+use Sylius\Component\Core\Model\ChannelInterface;
+use Sylius\Component\Core\Model\ImageInterface;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Core\Model\ProductVariant;
 use Sylius\Component\Core\Model\ProductVariantInterface;
 use Sylius\Component\Core\Model\ProductImageInterface;
 use Sylius\Component\Core\Model\TaxonInterface;
+use Sylius\Component\Locale\Model\LocaleInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 class ProductMapper
 {
-    private ChannelContextInterface $channel;
     private CacheManager $cacheManager;
     private TaxRateResolverInterface $taxRateResolver;
     private RouterInterface $router;
 
     /**
-     * @param ChannelContextInterface $channel
      * @param CacheManager $cacheManager
      * @param TaxRateResolverInterface $taxRateResolver
      * @param RouterInterface $router
      */
     public function __construct(
-        ChannelContextInterface $channel,
         CacheManager $cacheManager,
         TaxRateResolverInterface $taxRateResolver,
         RouterInterface $router
     ) {
-        $this->channel = $channel;
         $this->cacheManager = $cacheManager;
         $this->taxRateResolver = $taxRateResolver;
         $this->router = $router;
     }
 
-    public function map(ProductInterface $product): \Generator
+    public function map(ProductInterface $product, ChannelInterface $channel): \Generator
     {
+        /** @var LocaleInterface $defaultLocale */
+        $defaultLocale = $channel->getDefaultLocale();
         yield [
             'sku' => $product->getCode(),
             'name' => $product->getName(),
-            'tax' => $this->getTax($product),
+            'tax' => $this->getTax($product, $channel),
             'description' => $product->getDescription(),
             'categoryId' => $this->getTaxon($product),
             'images' => $this->getImages($product),
-            'variants' => $this->getVariants($product),
+            'variants' => $this->getVariants($product, $channel),
             'features' => $this->getFeatures($product),
             'allCategories' => $this->getTaxonomies($product),
             'allCategoriesExpanded' => $this->getTaxonomiesExpanded($product),
             'shortDescription' => $product->getShortDescription(),
             'slug' => $product->getSlug(),
             'url' => $this->router->generate('sylius_shop_product_show', [
-                '_locale' => $this->channel->getChannel()->getDefaultLocale()->getCode(),
+                '_locale' => $defaultLocale->getCode(),
                 'slug' => $product->getSlug(),
             ]),
         ];
     }
 
-    private function getTax(ProductInterface $product): int
+    private function getTax(ProductInterface $product, ChannelInterface $channel): int
     {
-        $criteria = ['zone' => $this->channel->getChannel()->getDefaultTaxZone()];
-        $taxRate = $this->taxRateResolver->resolve($product->getVariants()->first(), $criteria);
+        /** @var ProductVariant $variant */
+        $variant = $product->getVariants()->first();
+        $criteria = ['zone' => $channel->getDefaultTaxZone()];
+        $taxRate = $this->taxRateResolver->resolve($variant, $criteria);
 
         if (null === $taxRate) {
             return 0;
@@ -82,62 +84,75 @@ class ProductMapper
 
     private function getTaxon(ProductInterface $product): string
     {
-        return $product->getMainTaxon()->getCode();
+        /** @var TaxonInterface|null $mainTaxon */
+        $mainTaxon = $product->getMainTaxon();
+        if ( $mainTaxon !== null) {
+            return (string) $mainTaxon->getCode();
+        }
+
+        return '';
     }
 
     private function getImages(ProductInterface $product): array
     {
         $cache = $this->cacheManager;
-        return $product->getImages()->map(function (ProductImageInterface $image) use ($cache) {
-            return $cache->getBrowserPath(parse_url($image->getPath(), PHP_URL_PATH), 'sylius_admin_product_original');
+        return $product->getImages()->map(function (ImageInterface $image) use ($cache): string {
+            return $cache->getBrowserPath((string) parse_url((string) $image->getPath(), PHP_URL_PATH), 'sylius_admin_product_original');
         })->toArray();
     }
 
     private function getTaxonomies(ProductInterface $product): array
     {
-        return $product->getTaxons()->map(function (TaxonInterface $taxon) {
-            return $taxon->getName();
+        return $product->getTaxons()->map(function (TaxonInterface $taxon): string {
+            return (string) $taxon->getName();
         })->toArray();
     }
 
     private function getTaxonomiesExpanded(ProductInterface $product): array
     {
-        return $product->getTaxons()->map(function (TaxonInterface $taxon) {
-            return $taxon->getFullname();
+        return $product->getTaxons()->map(function (TaxonInterface $taxon): string {
+            return (string) $taxon->getFullname();
         })->toArray();
     }
 
-    private function getVariants(ProductInterface $product): array
+    private function getVariants(ProductInterface $product, ChannelInterface $channel): array
     {
         $return = [];
+        /** @var ProductVariantInterface $variant */
         foreach ($product->getVariants() as $variant) {
+            $quantity = (int) $variant->getOnHand() - (int) $variant->getOnHold();
             $return[$variant->getId()] = [
                 'full_name' => $variant->getName(),
                 'name' => $variant->getName(),
-                'price' => $this->getPrice($variant),
-                'quantity' => $variant->getOnHand() - $variant->getOnHold(),
+                'price' => $this->getPrice($variant, $channel),
+                'quantity' => $quantity,
                 'sku' => $variant->getCode(),
             ];
         }
         return $return;
     }
 
-    private function getFeatures(ProductInterface $product)
+    private function getFeatures(ProductInterface $product): array
     {
         $return = [];
         foreach ($product->getAttributes() as $attribute) {
-            $return[$attribute->getCode()] = [$attribute->getAttribute()->getName(), $attribute->getValue()];
+            $name = '';
+            if ($attribute->getAttribute() !== null) {
+                $name = $attribute->getAttribute()->getName();
+            }
+            $return[$attribute->getCode()] = [$name, $attribute->getValue()];
         }
-        $return = array_values($return);
-        return $return;
+        return array_values($return);
     }
 
-    private function getPrice(ProductVariantInterface $productVariant): float
+    private function getPrice(ProductVariantInterface $productVariant, ChannelInterface $channel): float
     {
-        $pricing = $productVariant->getChannelPricingForChannel($this->channel->getChannel());
+        $pricing = $productVariant->getChannelPricingForChannel($channel);
+
         if (null === $pricing) {
             return 0;
         }
-        return $pricing->getPrice() / 100;
+        $price = (int) $pricing->getPrice();
+        return  $price / 100;
     }
 }

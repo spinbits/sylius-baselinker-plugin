@@ -11,37 +11,41 @@ declare(strict_types=1);
 namespace Spinbits\SyliusBaselinkerPlugin\Mapper;
 
 use Sylius\Component\Channel\Context\ChannelContextInterface;
-use Sylius\Component\Product\Model\ProductInterface;
-use Sylius\Component\Product\Model\ProductVariantInterface;
+use Sylius\Component\Core\Model\ChannelInterface;
+use Sylius\Component\Core\Model\ProductVariant;
+use \Sylius\Component\Core\Model\ProductInterface;
 
 class ListProductMapper
 {
-    private ChannelContextInterface $channel;
+    private ChannelContextInterface $channelContext;
 
     public function __construct(ChannelContextInterface $channel)
     {
-        $this->channel = $channel;
+        $this->channelContext = $channel;
     }
 
-    public function map(ProductInterface $product): \Generator
+    public function map(ProductInterface $product, ChannelInterface $channel): \Generator
     {
+        /** @var ProductVariant $variant */
         foreach ($product->getVariants() as $variant) {
             yield [
                 'name' => $product->getName(),
                 'quantity' => $variant->getOnHand(),
-                'price' => $this->getPrice($variant),
+                'price' => $this->getPrice($variant, $channel),
                 'ean' => null, // not required
                 'sku' => $product->getCode(), // not required
             ];
         }
     }
 
-    private function getPrice(ProductVariantInterface $productVariant): float
+    private function getPrice(\Sylius\Component\Core\Model\ProductVariantInterface $productVariant, ChannelInterface $channel): float
     {
-        $pricing = $productVariant->getChannelPricingForChannel($this->channel->getChannel());
+        $pricing = $productVariant->getChannelPricingForChannel($channel);
+
         if (null === $pricing) {
             return 0;
         }
-        return $pricing->getPrice() / 100;
+        $price = (int) $pricing->getPrice();
+        return  $price / 100;
     }
 }
