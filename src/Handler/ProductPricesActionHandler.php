@@ -11,15 +11,13 @@ declare(strict_types=1);
 
 namespace Spinbits\SyliusBaselinkerPlugin\Handler;
 
-use Doctrine\Common\Collections\Collection;
-use Grpc\Channel;
+use Pagerfanta\Pagerfanta;
 use Spinbits\SyliusBaselinkerPlugin\Repository\BaseLinkerProductRepositoryInterface;
 use Spinbits\BaselinkerSdk\Filter\PageOnlyFilter;
 use Spinbits\BaselinkerSdk\Handler\HandlerInterface;
 use Spinbits\BaselinkerSdk\Rest\Input;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
-use Sylius\Component\Core\Model\Product;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Core\Model\ProductVariantInterface;
 
@@ -44,7 +42,8 @@ class ProductPricesActionHandler implements HandlerInterface
         $channelCode = (string) $this->channelContext->getChannel()->getCode();
         $paginator = $this->productRepository->fetchBaseLinkerPriceData($filter);
         $return = [];
-        /* @var $product ProductInterface */
+
+        /** @var ProductInterface[] $paginator */
         foreach ($paginator as $product) {
             $channel = $this->getProductChannel($product, $channelCode);
             if ($channel === null) {
@@ -52,11 +51,13 @@ class ProductPricesActionHandler implements HandlerInterface
             }
 
             $variants = [];
+            /** @var ProductVariantInterface $variant */
             foreach ($product->getEnabledVariants() as $variant) {
-                $variants[$variant->getId()] = $this->getPrice($variant, $channel);
+                $variants[(int) $variant->getId()] = $this->getPrice($variant, $channel);
             }
-            $return[$product->getId()] = $variants;
+            $return[(int) $product->getId()] = $variants;
         }
+        /** @var Pagerfanta $paginator */
         $return['pages'] = $paginator->getNbPages();
         return $return;
     }

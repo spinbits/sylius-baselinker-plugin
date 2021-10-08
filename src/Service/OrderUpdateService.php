@@ -40,10 +40,11 @@ class OrderUpdateService
     public function updateOrders(OrderUpdateModel $inputData): array
     {
         $orders = [];
+        /** @var int|string $orderId */
         foreach ($inputData->getOrdersIds() as $orderId) {
             /** @var OrderInterface|null $order */
             $order = $this->orderRepository->find($orderId);
-            Assert::isInstanceOf($order, OrderInterface::class, sprintf("Order %s was not found", $orderId));
+            Assert::isInstanceOf($order, OrderInterface::class, sprintf("Order %s was not found", (string) $orderId));
 
             $orders[] = $this->updateOrder($order, $inputData);
         }
@@ -59,7 +60,7 @@ class OrderUpdateService
                 /** @var PaymentInterface|null $lastPayment */
                 $lastPayment = $order->getLastPayment();
                 if ($lastPayment === null) {
-                    throw new \RuntimeException("Missing payment for order: " . $order->getId());
+                    throw new \RuntimeException("Missing payment for order: " . (string) $order->getId());
                 }
 
                 /** @var PaymentInterface $lastPayment */

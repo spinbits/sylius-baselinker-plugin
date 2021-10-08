@@ -29,13 +29,13 @@ class ProductsCategoriesActionHandler implements HandlerInterface
 
     public function handle(Input $input): array
     {
-        /* @var $taxons TaxonInterface[] */
+        /** @var TaxonInterface[] $taxons */
         $taxons = $this->taxonRepository->findAll();
 
         $return = [];
         foreach ($taxons as $taxon) {
             if ($this->canHandle($taxon)) {
-                $return[$taxon->getCode()] = $taxon->getFullname();
+                $return[(string) $taxon->getCode()] = $taxon->getFullname();
             }
         }
 

@@ -10,12 +10,14 @@ declare(strict_types=1);
 
 namespace Spinbits\SyliusBaselinkerPlugin\Handler;
 
+use Pagerfanta\Pagerfanta;
 use Spinbits\SyliusBaselinkerPlugin\Repository\BaseLinkerProductRepositoryInterface;
 use Spinbits\BaselinkerSdk\Filter\PageOnlyFilter;
 use Spinbits\BaselinkerSdk\Handler\HandlerInterface;
 use Spinbits\BaselinkerSdk\Rest\Input;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ProductInterface;
+use Sylius\Component\Core\Model\ProductVariantInterface;
 
 class ProductQuantityActionHandler implements HandlerInterface
 {
@@ -37,14 +39,16 @@ class ProductQuantityActionHandler implements HandlerInterface
 
         $paginator = $this->productRepository->fetchBaseLinkerQuantityData($filter);
         $return = [];
-        /* @var $product ProductInterface */
+        /** @var ProductInterface[] $paginator */
         foreach ($paginator as $product) {
             $variants = [];
+            /** @var ProductVariantInterface $variant */
             foreach ($product->getEnabledVariants() as $variant) {
-                $variants[$variant->getId()] = $variant->getOnHand();
+                $variants[(int) $variant->getId()] = $variant->getOnHand();
             }
-            $return[$product->getId()] = $variants;
+            $return[(int) $product->getId()] = $variants;
         }
+        /** @var Pagerfanta $paginator */
         $return['pages'] = $paginator->getNbPages();
 
         return $return;

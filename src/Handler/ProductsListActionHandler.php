@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Spinbits\SyliusBaselinkerPlugin\Handler;
 
+use Pagerfanta\Pagerfanta;
 use Spinbits\BaselinkerSdk\Handler\HandlerInterface;
 use Spinbits\SyliusBaselinkerPlugin\Repository\BaseLinkerProductRepositoryInterface;
 use Spinbits\SyliusBaselinkerPlugin\Mapper\ListProductMapper;
@@ -19,6 +20,7 @@ use Spinbits\BaselinkerSdk\Rest\Input;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ProductInterface;
+use Sylius\Component\Core\Model\ProductVariantInterface;
 
 class ProductsListActionHandler implements HandlerInterface
 {
@@ -44,16 +46,19 @@ class ProductsListActionHandler implements HandlerInterface
         $channelCode = (string) $this->channelContext->getChannel()->getCode();
         $paginator = $this->productRepository->fetchBaseLinkerData($filter);
         $return = [];
+        /** @var ProductInterface[] $paginator */
         foreach ($paginator as $product) {
             $channel = $this->getProductChannel($product, $channelCode);
             if ($channel === null) {
                 continue;
             }
 
+            /** @var ProductVariantInterface $variant */
             foreach ($this->mapper->map($product, $channel) as $variant) {
-                $return[$product->getId()] = $variant;
+                $return[(int) $product->getId()] = $variant;
             }
         }
+        /** @var Pagerfanta $paginator */
         $return['pages'] = $paginator->getNbPages();
         return  $return;
     }

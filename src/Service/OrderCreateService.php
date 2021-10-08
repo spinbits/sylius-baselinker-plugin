@@ -20,7 +20,6 @@ use SM\Factory\Factory as StateMachineFactory;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\CustomerRepository;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\OrderRepository;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\ProductVariantRepository;
-use Sylius\Component\Core\Model\Customer;
 use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Component\Core\Model\OrderItemInterface;
 use Sylius\Component\Core\Model\Payment;
@@ -30,7 +29,7 @@ use Sylius\Component\Core\OrderCheckoutTransitions;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
 use Sylius\Component\Core\Model\Order;
-use Sylius\Component\Order\Model\OrderInterface;
+use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Factory\PaymentFactoryInterface;
@@ -99,7 +98,7 @@ class OrderCreateService
     {
         Assert::notNull($orderAddModel->getBaselinkerId(), sprintf("BaselinkerId can not be empty."));
 
-        /* @var $order OrderInterface */
+        /** @var OrderInterface|null $order */
         $order = $this->orderRepository->findOneBy(['baselinkerOrderId' => $orderAddModel->getBaselinkerId()]);
         if (null === $order) {
             /** @var Order $order */
@@ -140,14 +139,16 @@ class OrderCreateService
 
     private function getCustomer(OrderAddModel $orderAddModel): CustomerInterface
     {
+        /** @var CustomerInterface|null $customer */
         $customer = $this->customerRepository->findOneBy(['email' => $orderAddModel->getEmail()]);
         if (null === $customer) {
-            /** @var CustomerInterface $customer*/
+            /** @var CustomerInterface $customer */
             $customer = $this->customerFactory->createNew();
             $customer->setEmail($orderAddModel->getEmail());
             $customer->setPhoneNumber($orderAddModel->getPhone());
         }
 
+        /** @var CustomerInterface $customer */
         return $customer;
     }
 
@@ -215,7 +216,7 @@ class OrderCreateService
         /** @var PaymentInterface|null $lastPayment */
         $lastPayment = $order->getLastPayment();
         if ($lastPayment === null) {
-            throw new \RuntimeException("Missing payment for order: " . $order->getId());
+            throw new \RuntimeException("Missing payment for order: " . (string) $order->getId());
         }
 
         /** @var PaymentInterface $lastPayment */

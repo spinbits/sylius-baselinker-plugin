@@ -50,7 +50,7 @@ class OrderAddActionHandler implements HandlerInterface
     }
 
     /**
-     * @param ConstraintViolationListInterface|ConstraintViolation[] $result
+     * @param ConstraintViolationListInterface $result
      *
      * @throws InvalidArgumentException
      */
@@ -60,6 +60,7 @@ class OrderAddActionHandler implements HandlerInterface
             return;
         }
 
+        /** @var ConstraintViolation[] $result */
         $errors = [];
         foreach ($result as $violation) {
             $errors[] = $violation->getPropertyPath() . ": " . $violation->getMessage();

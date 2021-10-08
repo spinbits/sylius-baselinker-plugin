@@ -13,6 +13,7 @@ namespace Spinbits\SyliusBaselinkerPlugin\Controller;
 use Spinbits\BaselinkerSdk\RequestHandler;
 use Spinbits\BaselinkerSdk\Rest\Input;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,15 +24,19 @@ final class BaselinkerConnectorController extends AbstractController
 
     /**
      * @param RequestHandler $requestHandler
+     * @param ContainerInterface $container
      */
-    public function __construct(RequestHandler $requestHandler)
+    public function __construct(RequestHandler $requestHandler, ContainerInterface $container)
     {
+        $this->container = $container;
         $this->requestHandler = $requestHandler;
     }
 
     public function connectorAction(Request $request): Response
     {
-        $input = new Input($request->request->all());
+        /** @var array<string, mixed> $input */
+        $input = $request->request->all();
+        $input = new Input($input);
         $response = $this->requestHandler->handle($input);
 
         return new JsonResponse($response->content(), $response->code() < 100 ? 500 : $response->code());

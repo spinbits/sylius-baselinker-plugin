@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Spinbits\SyliusBaselinkerPlugin\Mapper;
 
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Sylius\Component\Attribute\Model\AttributeInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ImageInterface;
@@ -121,7 +122,7 @@ class ProductMapper
         /** @var ProductVariantInterface $variant */
         foreach ($product->getVariants() as $variant) {
             $quantity = (int) $variant->getOnHand() - (int) $variant->getOnHold();
-            $return[$variant->getId()] = [
+            $return[(int) $variant->getId()] = [
                 'full_name' => $variant->getName(),
                 'name' => $variant->getName(),
                 'price' => $this->getPrice($variant, $channel),
@@ -137,10 +138,13 @@ class ProductMapper
         $return = [];
         foreach ($product->getAttributes() as $attribute) {
             $name = '';
-            if ($attribute->getAttribute() !== null) {
-                $name = $attribute->getAttribute()->getName();
+            /** @var AttributeInterface|null $attr */
+            $attr = $attribute->getAttribute();
+            if ($attr !== null) {
+                /** @var AttributeInterface $attr */
+                $name = $attr->getName();
             }
-            $return[$attribute->getCode()] = [$name, $attribute->getValue()];
+            $return[(string) $attribute->getCode()] = [$name, $attribute->getValue()];
         }
         return array_values($return);
     }

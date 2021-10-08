@@ -15,6 +15,7 @@ use Pagerfanta\Pagerfanta;
 use Spinbits\BaselinkerSdk\Filter\PageOnlyFilter;
 use Spinbits\BaselinkerSdk\Filter\ProductDetailsFilter;
 use Spinbits\BaselinkerSdk\Filter\ProductListFilter;
+use Sylius\Component\Core\Model\Product;
 
 interface BaseLinkerProductRepositoryInterface
 {

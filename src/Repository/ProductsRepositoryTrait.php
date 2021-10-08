@@ -200,7 +200,8 @@ trait ProductsRepositoryTrait
                 $field = 'o.id';
                 break;
         }
-        $queryBuilder->addOrderBy($field, $sort[1]??'ASC');
+        $order = $sort[1] !== null ? (string) $sort[1] : 'ASC';
+        $queryBuilder->addOrderBy($field, $order);
     }
 
     private function joinTranslations(QueryBuilder $queryBuilder): void
