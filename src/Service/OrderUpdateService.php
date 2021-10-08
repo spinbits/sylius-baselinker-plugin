@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Spinbits\SyliusBaselinkerPlugin\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use SM\Factory\Factory as StateMachineFactory;
+use SM\Factory\FactoryInterface as StateMachineFactory;
 use Spinbits\BaselinkerSdk\Model\OrderUpdateModel;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\OrderRepository;
 use Sylius\Component\Core\Model\OrderInterface;

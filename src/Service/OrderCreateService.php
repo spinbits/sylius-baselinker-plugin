@@ -16,7 +16,7 @@ use Spinbits\BaselinkerSdk\Model\ProductModel;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Factory\CartItemFactoryInterface;
 use Sylius\Component\Core\Model\Address;
-use SM\Factory\Factory as StateMachineFactory;
+use SM\Factory\FactoryInterface as StateMachineFactory;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\CustomerRepository;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\OrderRepository;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\ProductVariantRepository;
