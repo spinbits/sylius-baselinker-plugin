@@ -55,7 +55,6 @@ class OrderCreateService
     private StateMachineFactory $stateMachineFactory;
     private PaymentFactoryInterface $paymentFactory;
     private PaymentMethodRepositoryInterface $paymentMethodRepository;
-    private ?string $paymentMethodCode = null;
 
     public function __construct(
         Factory $orderFactory,
@@ -71,8 +70,7 @@ class OrderCreateService
         ChannelContextInterface $channelContext,
         OrderItemQuantityModifierInterface $orderItemQuantityModifier,
         OrderProcessorInterface $orderProcessor,
-        StateMachineFactory $stateMachineFactory,
-        ?string $paymentMethodCode = null
+        StateMachineFactory $stateMachineFactory
     ) {
         $this->orderFactory = $orderFactory;
         $this->orderItemFactory = $orderItemFactory;
@@ -88,13 +86,9 @@ class OrderCreateService
         $this->stateMachineFactory = $stateMachineFactory;
         $this->paymentFactory = $paymentFactory;
         $this->paymentMethodRepository = $paymentMethodRepository;
-
-        if (null === $paymentMethodCode) {
-            $this->paymentMethodCode = $this->getDefaultPaymentMethodCode();
-        }
     }
 
-    public function createOrder(OrderAddModel $orderAddModel): OrderInterface
+    public function createOrder(OrderAddModel $orderAddModel, ?string $paymentMethodCode = null): OrderInterface
     {
         Assert::notNull($orderAddModel->getBaselinkerId(), sprintf("BaselinkerId can not be empty."));
 
@@ -103,6 +97,9 @@ class OrderCreateService
         if (null === $order) {
             /** @var Order $order */
             $order = $this->orderFactory->createNew();
+            if (null === $paymentMethodCode) {
+                $paymentMethodCode = $this->getDefaultPaymentMethodCode();
+            }
 
             $order->setChannel($this->channelContext->getChannel());
             $order->setLocaleCode($this->localeContext->getLocaleCode());
@@ -110,7 +107,7 @@ class OrderCreateService
 
             $customer = $this->getCustomer($orderAddModel);
             $address = $this->getAddress($orderAddModel, $customer);
-            $payment = $this->getPayment((string) $this->paymentMethodCode, (string) $order->getCurrencyCode());
+            $payment = $this->getPayment($paymentMethodCode, (string) $order->getCurrencyCode());
 
             $order->setCustomer($customer);
             $order->setShippingAddress($address);
