@@ -46,7 +46,7 @@ Feature: Programmer
             }
             """
         When I request "POST /baselinker-connector"
-        And I get response body:
+        And I get response body with same structure:
             """
             {
             "order_id": 21
