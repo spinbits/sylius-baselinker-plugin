@@ -7,7 +7,7 @@ namespace Spinbits\SyliusBaselinkerPlugin\Entity\Order;
 trait OrderTrait
 {
 
-    private ?string $baselinkerOrderId;
+    private ?string $baselinkerOrderId = null;
 
     /**
      * @return string|null
