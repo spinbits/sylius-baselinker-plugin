@@ -1,0 +1,5 @@
+sylius_order:
+  resources:
+    order:
+      classes:
+        model: Tests\Spinbits\SyliusBaselinkerPlugin\Entity\Order

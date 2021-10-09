@@ -5,7 +5,7 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                   http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd"
 >
-    <mapped-superclass name="Tests\Spinbits\SyliusBaselinkerPlugin\Application\src\Entity\Order" table="sylius_order">
+    <entity name="Tests\Spinbits\SyliusBaselinkerPlugin\Entity\Order" table="sylius_order">
         <field name="baselinkerOrderId" type="varchar" length="32" nullable="true" column="baselinker_order_id"/>
-    </mapped-superclass>
+    </entity>
 </doctrine-mapping>

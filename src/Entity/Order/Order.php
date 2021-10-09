@@ -8,9 +8,8 @@
 
 declare(strict_types=1);
 
-namespace Tests\Spinbits\SyliusBaselinkerPlugin\Application\src\Entity\Order;
+namespace Spinbits\SyliusBaselinkerPlugin\Entity\Order;
 
-use Spinbits\SyliusBaselinkerPlugin\Entity\Order\OrderTrait;
 use Sylius\Component\Core\Model\Order as BaseOrder;
 
 class Order extends BaseOrder
