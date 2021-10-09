@@ -46,7 +46,14 @@
         "symfony/web-profiler-bundle": "^4.4 || ^5.2",
         "vimeo/psalm": "4.4.1"
     },
-    "prefer-stable": true,
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.9-dev"
+        }
+    },
     "autoload": {
         "psr-4": {
             "Spinbits\\SyliusBaselinkerPlugin\\": "src/",
