@@ -227,7 +227,8 @@ class OrderCreateService
     {
         /** @var PaymentMethod[] $paymentMethods */
         $paymentMethods = $this->paymentMethodRepository->findAll();
-        Assert::keyExists($paymentMethods, 0, 'No payment method configured.');
-        return (string) $paymentMethods[0]->getCode();
+        $firstMethod = reset($paymentMethods);
+        Assert::isInstanceOf($firstMethod, PaymentMethod::class, 'No payment method configured.');
+        return (string) $firstMethod->getCode();
     }
 }
