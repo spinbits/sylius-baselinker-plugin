@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Spinbits\SyliusBaselinkerPlugin\Handler;
 
 use Spinbits\BaselinkerSdk\Model\OrderAddModel;
+use Spinbits\SyliusBaselinkerPlugin\Entity\Order\Order;
 use Spinbits\SyliusBaselinkerPlugin\Service\OrderCreateService;
 use Spinbits\BaselinkerSdk\Handler\HandlerInterface;
 use Spinbits\BaselinkerSdk\Rest\Exception\InvalidArgumentException;
@@ -43,8 +44,9 @@ class OrderAddActionHandler implements HandlerInterface
         $result = $this->validator->validate($orderAddModel);
         $this->assertIsValid($result);
 
+        /** @var Order $order */
         $order = $this->orderCreateService->createOrder($orderAddModel);
-        //$order->setBaselinkerOrderId((string) $orderAddModel->getBaselinkerId());
+        $order->setBaselinkerOrderId((string) $orderAddModel->getBaselinkerId());
 
         return ['order_id' => $order->getId()];
     }

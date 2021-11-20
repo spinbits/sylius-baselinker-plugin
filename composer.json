@@ -57,12 +57,13 @@
     "autoload": {
         "psr-4": {
             "Spinbits\\SyliusBaselinkerPlugin\\": "src/",
-            "Tests\\Spinbits\\SyliusBaselinkerPlugin\\": ["tests/", "tests/Application/src"]
+            "Tests\\Spinbits\\SyliusBaselinkerPlugin\\Application\\": "tests/Application/src",
+            "Tests\\Spinbits\\SyliusBaselinkerPlugin\\Behat\\": "tests/Behat"
         }
     },
     "autoload-dev": {
         "classmap": [
-            "tests/Application/Kernel.php"
+            "tests/Application/src/Kernel.php"
         ]
     }
 }

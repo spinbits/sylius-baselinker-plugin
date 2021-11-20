@@ -8,11 +8,16 @@
 
 declare(strict_types=1);
 
-namespace Tests\Spinbits\SyliusBaselinkerPlugin\Entity;
+namespace Tests\Spinbits\SyliusBaselinkerPlugin\Application\Entity;
 
 use Spinbits\SyliusBaselinkerPlugin\Entity\Order\OrderTrait;
 use Sylius\Component\Core\Model\Order as BaseOrder;
+use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="sylius_order")
+ */
 class Order extends BaseOrder
 {
     use OrderTrait;
