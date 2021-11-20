@@ -228,6 +228,6 @@ class OrderCreateService
         /** @var PaymentMethod|null $paymentMethod */
         $paymentMethod = $this->paymentMethodRepository->findOneBy([]);
 
-        return $paymentMethod ? (string) $paymentMethod->getCode() : 'baselinker payment';
+        return $paymentMethod instanceOf PaymentMethod ? (string) $paymentMethod->getCode() : 'baselinker payment';
     }
 }
