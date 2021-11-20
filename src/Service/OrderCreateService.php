@@ -227,7 +227,7 @@ class OrderCreateService
     {
         /** @var PaymentMethod|null $paymentMethod */
         $paymentMethod = $this->paymentMethodRepository->findOneBy([]);
-        Assert::isInstanceOf($paymentMethod, PaymentMethod::class, 'No payment method configured.');
-        return (string) $paymentMethod->getCode();
+
+        return $paymentMethod ? (string) $paymentMethod->getCode() : 'baselinker payment';
     }
 }
