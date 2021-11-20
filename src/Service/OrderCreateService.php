@@ -225,10 +225,9 @@ class OrderCreateService
 
     private function getDefaultPaymentMethodCode(): string
     {
-        /** @var PaymentMethod[] $paymentMethods */
-        $paymentMethods = $this->paymentMethodRepository->findAll();
-        $firstMethod = reset($paymentMethods);
-        Assert::isInstanceOf($firstMethod, PaymentMethod::class, 'No payment method configured.');
-        return (string) $firstMethod->getCode();
+        /** @var PaymentMethod $paymentMethod */
+        $paymentMethod = $this->paymentMethodRepository->findOneBy([]);
+        Assert::isInstanceOf($paymentMethod, PaymentMethod::class, 'No payment method configured.');
+        return (string) $paymentMethod->getCode();
     }
 }
