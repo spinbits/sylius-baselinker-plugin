@@ -36,7 +36,7 @@ jobs:
 
         env:
             APP_ENV: test
-            DATABASE_URL: "mysql://root:root@127.0.0.1/sylius?serverVersion=${{ matrix.mysql }}"
+            DATABASE_URL: "mysql://root:root@127.0.0.1/spinbits_sylius_baselinker_plugin_%kernel.environment%?serverVersion=${{ matrix.mysql }}"
 
         steps:
             -
