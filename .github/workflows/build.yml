@@ -172,11 +172,11 @@ jobs:
 
             -
                 name: Check database products
-                run: mysql -u root -proot sylius -h 127.0.0.1 -e "select * from sylius_product;"
+                run: mysql -u root -proot spinbits_sylius_baselinker_plugin_test -h 127.0.0.1 -e "select * from sylius_product;"
 
             -
                 name: Check database channels
-                run: mysql -u root -proot sylius -h 127.0.0.1 -e "select * from sylius_channel;"
+                run: mysql -u root -proot spinbits_sylius_baselinker_plugin_test -h 127.0.0.1 -e "select * from sylius_channel;"
 
             -
                 name: Run Behat
