@@ -53,7 +53,7 @@ class BaselinkerConnectorContext implements Context
         $this->connectorPage = $connectorPage;
         $config = isset($parameters['guzzle']) && is_array($parameters['guzzle']) ? $parameters['guzzle'] : [];
 
-        $config['base_uri'] = $parameters['base_uri'] ?? 'http://127.0.0.1:8080';
+        $config['base_uri'] = $parameters['base_uri'] ?? 'http://localhost:8080';
 
         $this->client = new Client($config);
     }
