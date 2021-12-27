@@ -189,23 +189,23 @@ class BaselinkerConnectorContext implements Context
     /**
      * This method returns difference between assoc arrays when comparing keys only.
      * Values are not compared. Basically it shows difference in array keys structure.
-     * @param $array1
-     * @param $array2
+     * @param $array1 array
+     * @param $array2 array
      * @return array
      */
-    private function arrayDiffKeysAssocRecursive($array1, $array2): array
+    private function arrayDiffKeysAssocRecursive(array $array1, array $array2): array
     {
         $difference = [];
-        foreach($array1 as $key => $value) {
-            if( is_array($value) ) {
-                if( !isset($array2[$key]) || !is_array($array2[$key]) ) {
+        foreach ($array1 as $key => $value) {
+            if (is_array($value)) {
+                if (!isset($array2[$key]) || !is_array($array2[$key])) {
                     $difference[$key] = $value;
                 } else {
                     $new_diff = $this->arrayDiffKeysAssocRecursive($value, $array2[$key]);
-                    if( !empty($new_diff) )
+                    if (!empty($new_diff))
                         $difference[$key] = $new_diff;
                 }
-            } else if( !array_key_exists($key,$array2) /*|| $array2[$key] !== $value*/ ) {
+            } else if (!array_key_exists($key, $array2) /*|| $array2[$key] !== $value*/) {
                 $difference[$key] = $value;
             }
         }

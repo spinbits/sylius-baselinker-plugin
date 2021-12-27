@@ -170,7 +170,7 @@ class OrderCreateService
         $variant = $this->productVariantRepository->find($product->getVariantId());
 
         $message = sprintf("Product variant with %s id was not found!", $product->getVariantId());
-        Assert::isInstanceOf($variant, ProductVariantInterface::class, $message);
+        Assert::notNull($variant, $message);
 
         /** @var OrderItemInterface $orderItem */
         $orderItem = $this->orderItemFactory->createNew();
