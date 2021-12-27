@@ -31,7 +31,9 @@
             <argument key="$orderItemFactory" type="service" id="sylius.custom_factory.order_item"/>
             <argument key="$stateMachineFactory" type="service" id="sm.factory"/>
         </service>
-        <service id="Spinbits\SyliusBaselinkerPlugin\Service\OrderUpdateService" autowire="true" autoconfigure="true"/>
+        <service id="Spinbits\SyliusBaselinkerPlugin\Service\OrderUpdateService" autowire="true" autoconfigure="true">
+            <argument key="$stateMachineFactory" type="service" id="sm.factory"/>
+        </service>
 
         <service id="Spinbits\SyliusBaselinkerPlugin\Mapper\ProductMapper" autowire="true" autoconfigure="true"/>
         <service id="Spinbits\SyliusBaselinkerPlugin\Mapper\ListProductMapper" autowire="true" autoconfigure="true"/>
