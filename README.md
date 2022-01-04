@@ -15,20 +15,75 @@ there you will find the <a href="https://docs.sylius.com/en/latest/plugin-develo
 
 ## Quickstart Installation
 
-1. Run `composer create-project sylius/plugin-skeleton ProjectName`.
+1. Run `composer require spinbits/sylius-baselinker-plugin`.
 
-2. From the plugin skeleton root directory, run the following commands:
+2. Import route into your routing file:
 
-    ```bash
-    $ (cd tests/Application && yarn install)
-    $ (cd tests/Application && yarn build)
-    $ (cd tests/Application && APP_ENV=test bin/console assets:install public)
-    
-    $ (cd tests/Application && APP_ENV=test bin/console doctrine:database:create)
-    $ (cd tests/Application && APP_ENV=test bin/console doctrine:schema:create)
-    ```
+```
+spinbits_baselinker_plugin:
+    resource: "@SpinbitsSyliusBaselinkerPlugin/Resources/config/admin_routing.yml"
+```
 
-To be able to setup a plugin's database, remember to configure you database credentials in `tests/Application/.env` and `tests/Application/.env.test`.
+3. Import trait to your Order entity: `src/Entity/Order/Order.php`
+```
+use Spinbits\SyliusBaselinkerPlugin\Entity\Order\OrderTrait;
+
+class Order extends BaseOrder
+{
+    use OrderTrait;
+
+```
+
+4. Register BaselinkerHandlers and passowrd: `config/services.yaml`
+```
+    Spinbits\BaselinkerSdk\RequestHandler:
+        arguments:
+            $password: '%env(BASELINKER_PASSWORD)%'
+        calls:
+            - method: registerHandler
+              arguments:
+                  - FileVersion
+                  - '@Spinbits\SyliusBaselinkerPlugin\Handler\FileVersionActionHandler'
+            - method: registerHandler
+              arguments:
+                  - OrderAdd
+                  - '@Spinbits\SyliusBaselinkerPlugin\Handler\OrderAddActionHandler'
+            - method: registerHandler
+              arguments:
+                  - ProductsPrices
+                  - '@Spinbits\SyliusBaselinkerPlugin\Handler\ProductPricesActionHandler'
+            - method: registerHandler
+              arguments:
+                  - ProductsQuantity
+                  - '@Spinbits\SyliusBaselinkerPlugin\Handler\ProductQuantityActionHandler'
+            - method: registerHandler
+              arguments:
+                  - ProductsCategories
+                  - '@Spinbits\SyliusBaselinkerPlugin\Handler\ProductsCategoriesActionHandler'
+            - method: registerHandler
+              arguments:
+                  - ProductsDetails
+                  - '@Spinbits\SyliusBaselinkerPlugin\Handler\ProductsDetailsActionHandler'
+            - method: registerHandler
+              arguments:
+                  - ProductsList
+                  - '@Spinbits\SyliusBaselinkerPlugin\Handler\ProductsListActionHandler'
+            - method: registerHandler
+              arguments:
+                  - StatusesList
+                  - '@Spinbits\SyliusBaselinkerPlugin\Handler\StatusesListActionHandler'
+            - method: registerHandler
+              arguments:
+                  - SupportedMethods
+                  - '@Spinbits\BaselinkerSdk\Handler\Common\SupportedMethodsActionHandler'
+
+```
+
+5. Copy Migration file:
+`cp vendor/spinbits/sylius-baselinker-plugin/src/Migrations/Version20211005090821.php ./src/Migrations/`
+
+6. Run migrations:
+`bin/console doctrine:migrations:migrate`
 
 ## Usage
 
