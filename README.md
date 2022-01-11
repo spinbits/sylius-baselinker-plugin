@@ -7,7 +7,7 @@
 <h1 align="center">Sylius Baselinker Plugin</h1>
 
 ## Help
-If you need some help with Sylius development, don't be hesitated to contact us directly. You can send us an email at office@spinbits.io
+If you need some help with Sylius development, don't hesitate to contact us directly. You can send us an email at office@spinbits.io
 
 ## Quickstart Installation
 
