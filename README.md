@@ -4,14 +4,10 @@
     </a>
 </p>
 
-<h1 align="center">Plugin Skeleton</h1>
+<h1 align="center">Sylius Baselinker Plugin</h1>
 
-<p align="center">Skeleton for starting Sylius plugins.</p>
-
-## Documentation
-
-For a comprehensive guide on Sylius Plugins development please go to Sylius documentation,
-there you will find the <a href="https://docs.sylius.com/en/latest/plugin-development-guide/index.html">Plugin Development Guide</a>, that is full of examples.
+## Help
+If you need some help with Sylius development, don't be hesitated to contact us directly. You can send us an email at office@spinbits.io
 
 ## Quickstart Installation
 
