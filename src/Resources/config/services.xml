@@ -38,7 +38,7 @@
         <service id="Spinbits\SyliusBaselinkerPlugin\Mapper\ListProductMapper" autowire="true" autoconfigure="true"/>
 
         <service id="Spinbits\BaselinkerSdk\RequestHandler">
-            <argument key="$password" type="string">example-password-change-it</argument>
+            <argument key="$password" type="string">%env(BASELINKER_PASSWORD)%</argument>
             <call method="registerHandler">
                 <argument type="string">FileVersion</argument>
                 <argument type="service" id="Spinbits\SyliusBaselinkerPlugin\Handler\FileVersionActionHandler" />
