@@ -13,13 +13,11 @@ namespace Spinbits\SyliusBaselinkerPlugin\Mapper;
 
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Sylius\Component\Attribute\Model\AttributeInterface;
-use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ImageInterface;
-use Sylius\Component\Core\Model\ProductInterface;
+use Sylius\Component\Core\Model\Product;
 use Sylius\Component\Core\Model\ProductVariant;
 use Sylius\Component\Core\Model\ProductVariantInterface;
-use Sylius\Component\Core\Model\ProductImageInterface;
 use Sylius\Component\Core\Model\TaxonInterface;
 use Sylius\Component\Locale\Model\LocaleInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
@@ -46,7 +44,7 @@ class ProductMapper
         $this->router = $router;
     }
 
-    public function map(ProductInterface $product, ChannelInterface $channel): \Generator
+    public function map(Product $product, ChannelInterface $channel): \Generator
     {
         /** @var LocaleInterface $defaultLocale */
         $defaultLocale = $channel->getDefaultLocale();
@@ -70,7 +68,7 @@ class ProductMapper
         ];
     }
 
-    private function getTax(ProductInterface $product, ChannelInterface $channel): int
+    private function getTax(Product $product, ChannelInterface $channel): int
     {
         /** @var ProductVariant $variant */
         $variant = $product->getVariants()->first();
@@ -83,7 +81,7 @@ class ProductMapper
         return (int) $taxRate->getAmount();
     }
 
-    private function getTaxon(ProductInterface $product): string
+    private function getTaxon(Product $product): string
     {
         /** @var TaxonInterface|null $mainTaxon */
         $mainTaxon = $product->getMainTaxon();
@@ -94,7 +92,7 @@ class ProductMapper
         return '';
     }
 
-    private function getImages(ProductInterface $product): array
+    private function getImages(Product $product): array
     {
         $cache = $this->cacheManager;
         return $product->getImages()->map(function (ImageInterface $image) use ($cache): string {
@@ -102,21 +100,21 @@ class ProductMapper
         })->toArray();
     }
 
-    private function getTaxonomies(ProductInterface $product): array
+    private function getTaxonomies(Product $product): array
     {
         return $product->getTaxons()->map(function (TaxonInterface $taxon): string {
             return (string) $taxon->getName();
         })->toArray();
     }
 
-    private function getTaxonomiesExpanded(ProductInterface $product): array
+    private function getTaxonomiesExpanded(Product $product): array
     {
         return $product->getTaxons()->map(function (TaxonInterface $taxon): string {
             return (string) $taxon->getFullname();
         })->toArray();
     }
 
-    private function getVariants(ProductInterface $product, ChannelInterface $channel): array
+    private function getVariants(Product $product, ChannelInterface $channel): array
     {
         $return = [];
         /** @var ProductVariantInterface $variant */
@@ -133,7 +131,7 @@ class ProductMapper
         return $return;
     }
 
-    private function getFeatures(ProductInterface $product): array
+    private function getFeatures(Product $product): array
     {
         $return = [];
         foreach ($product->getAttributes() as $attribute) {

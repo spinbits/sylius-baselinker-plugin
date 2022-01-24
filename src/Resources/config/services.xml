@@ -13,7 +13,6 @@
         <service id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductsDetailsActionHandler" autowire="true" autoconfigure="true"/>
         <service id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductsListActionHandler" autowire="true" autoconfigure="true"/>
         <service id="Spinbits\SyliusBaselinkerPlugin\Handler\StatusesListActionHandler" autowire="true" autoconfigure="true"/>
-        <service id="Spinbits\SyliusBaselinkerPlugin\Handler\SupportedMethodsActionHandler" autowire="true" autoconfigure="true"/>
         <service id="Spinbits\BaselinkerSdk\Handler\Common\SupportedMethodsActionHandler" autowire="true" autoconfigure="true"/>
 
         <service id="Spinbits\SyliusBaselinkerPlugin\Repository\BaseLinkerProductRepositoryInterface"

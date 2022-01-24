@@ -19,7 +19,7 @@ use Spinbits\BaselinkerSdk\Filter\ProductListFilter;
 use Spinbits\BaselinkerSdk\Rest\Input;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
-use Sylius\Component\Core\Model\ProductInterface;
+use Sylius\Component\Core\Model\Product;
 use Sylius\Component\Core\Model\ProductVariantInterface;
 
 class ProductsListActionHandler implements HandlerInterface
@@ -46,7 +46,7 @@ class ProductsListActionHandler implements HandlerInterface
         $channelCode = (string) $this->channelContext->getChannel()->getCode();
         $paginator = $this->productRepository->fetchBaseLinkerData($filter);
         $return = [];
-        /** @var ProductInterface[] $paginator */
+        /** @var Product[] $paginator */
         foreach ($paginator as $product) {
             $channel = $this->getProductChannel($product, $channelCode);
             if ($channel === null) {
@@ -64,12 +64,12 @@ class ProductsListActionHandler implements HandlerInterface
     }
 
     /**
-     * @param ProductInterface $product
+     * @param Product $product
      * @param string $channelCode
      *
      * @return ChannelInterface|null
      */
-    private function getProductChannel(ProductInterface $product, string $channelCode): ?ChannelInterface
+    private function getProductChannel(Product $product, string $channelCode): ?ChannelInterface
     {
         /** @var ChannelInterface $channel */
         foreach ($product->getChannels() as $channel) {

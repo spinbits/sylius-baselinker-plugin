@@ -16,7 +16,7 @@ use Spinbits\BaselinkerSdk\Filter\PageOnlyFilter;
 use Spinbits\BaselinkerSdk\Handler\HandlerInterface;
 use Spinbits\BaselinkerSdk\Rest\Input;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
-use Sylius\Component\Core\Model\ProductInterface;
+use Sylius\Component\Core\Model\Product;
 use Sylius\Component\Core\Model\ProductVariantInterface;
 
 class ProductQuantityActionHandler implements HandlerInterface
@@ -39,7 +39,7 @@ class ProductQuantityActionHandler implements HandlerInterface
 
         $paginator = $this->productRepository->fetchBaseLinkerQuantityData($filter);
         $return = [];
-        /** @var ProductInterface[] $paginator */
+        /** @var Product[] $paginator */
         foreach ($paginator as $product) {
             $variants = [];
             /** @var ProductVariantInterface $variant */

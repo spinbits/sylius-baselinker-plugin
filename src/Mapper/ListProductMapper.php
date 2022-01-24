@@ -13,7 +13,7 @@ namespace Spinbits\SyliusBaselinkerPlugin\Mapper;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ProductVariant;
-use \Sylius\Component\Core\Model\ProductInterface;
+use \Sylius\Component\Core\Model\Product;
 
 class ListProductMapper
 {
@@ -24,7 +24,7 @@ class ListProductMapper
         $this->channelContext = $channel;
     }
 
-    public function map(ProductInterface $product, ChannelInterface $channel): \Generator
+    public function map(Product $product, ChannelInterface $channel): \Generator
     {
         /** @var ProductVariant $variant */
         foreach ($product->getVariants() as $variant) {
