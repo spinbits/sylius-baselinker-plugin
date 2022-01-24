@@ -35,8 +35,13 @@ If you need some help with Sylius development, don't hesitate to contact us dire
     ```
     BASELINKER_PASSWORD='example-password'
     ```
-
-5. Run migrations:
+5. Imports Plugin XML config file:
+    ```
+        <imports>
+            <import resource="@SyliusBaselinkerPlugin/Resources/services.xml"/>
+        </imports>
+    ```            
+6. Run migrations:
     `bin/console doctrine:migrations:migrate`
 
 ## Usage
