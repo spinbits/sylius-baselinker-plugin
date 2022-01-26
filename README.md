@@ -3,7 +3,7 @@
 # Sylius Baselinker Plugin
 
 This package is implementation of communication with BaseLinker Connector ("integration file"). 
-For further details please refer to https://connectors.baselinker.com/exec/docs/index.php 
+For further details please refer to https://developers.baselinker.com/shops_api/ 
 
 After installation your baselinker connector url will ba available under path: `/baselinker-connector` of your shop.
 
