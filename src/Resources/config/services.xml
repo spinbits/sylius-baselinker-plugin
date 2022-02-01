@@ -29,7 +29,6 @@
         <service id="Spinbits\SyliusBaselinkerPlugin\Service\OrderCreateService" autowire="true" autoconfigure="true">
             <argument key="$orderItemFactory" type="service" id="sylius.custom_factory.order_item"/>
             <argument key="$addressFactory" type="service" id="sylius.custom_factory.address"/>
-            <argument key="$cartManager" type="service" id="sylius.manager.order"/>
             <argument key="$stateMachineFactory" type="service" id="sm.factory"/>
         </service>
         <service id="Spinbits\SyliusBaselinkerPlugin\Service\OrderUpdateService" autowire="true" autoconfigure="true">

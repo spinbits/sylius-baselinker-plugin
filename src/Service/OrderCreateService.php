@@ -58,7 +58,6 @@ class OrderCreateService
     private StateMachineFactory $stateMachineFactory;
     private PaymentFactoryInterface $paymentFactory;
     private PaymentMethodRepositoryInterface $paymentMethodRepository;
-    private ObjectManager $cartManager;
 
     public function __construct(
         Factory $orderFactory,
@@ -75,8 +74,7 @@ class OrderCreateService
         ChannelContextInterface $channelContext,
         OrderItemQuantityModifierInterface $orderItemQuantityModifier,
         OrderProcessorInterface $orderProcessor,
-        StateMachineFactory $stateMachineFactory,
-        ObjectManager $cartManager
+        StateMachineFactory $stateMachineFactory
     ) {
         $this->orderFactory = $orderFactory;
         $this->orderItemFactory = $orderItemFactory;
@@ -93,7 +91,6 @@ class OrderCreateService
         $this->stateMachineFactory = $stateMachineFactory;
         $this->paymentFactory = $paymentFactory;
         $this->paymentMethodRepository = $paymentMethodRepository;
-        $this->cartManager = $cartManager;
     }
 
     public function createOrder(OrderAddModel $orderAddModel, ?string $paymentMethodCode = null): OrderInterface
@@ -206,11 +203,7 @@ class OrderCreateService
     {
         $stateMachine = $this->stateMachineFactory->get($order, OrderCheckoutTransitions::GRAPH);
         $stateMachine->apply(OrderCheckoutTransitions::TRANSITION_ADDRESS);
-        $stateMachine->apply(OrderCheckoutTransitions::TRANSITION_SKIP_SHIPPING);
-        $stateMachine->apply(OrderCheckoutTransitions::TRANSITION_SELECT_PAYMENT);
         $stateMachine->apply(OrderCheckoutTransitions::TRANSITION_COMPLETE);
-
-        $this->cartManager->flush();
     }
 
     private function markPayment(OrderInterface $order, bool $paid): void
