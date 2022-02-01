@@ -154,6 +154,7 @@ class OrderCreateService
 
     private function getAddress(OrderAddModel $orderAddModel, CustomerInterface $customer): Address
     {
+        /** @var Address $address */
         $address = $this->addressFactory->createNew();
         $address->setFirstName($orderAddModel->getDeliveryFullname() ?? "");
         $address->setLastName("");
