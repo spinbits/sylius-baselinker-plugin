@@ -104,7 +104,8 @@ class OrderCreateService
             if (null === $paymentMethodCode) {
                 $paymentMethodCode = $this->getDefaultPaymentMethodCode();
             }
-
+            /** @var \Spinbits\SyliusBaselinkerPlugin\Entity\Order\Order $order */
+            $order->setBaselinkerOrderId($orderAddModel->getBaselinkerId());
             $order->setChannel($this->channelContext->getChannel());
             $order->setLocaleCode($this->localeContext->getLocaleCode());
             $order->setCurrencyCode($this->currencyContext->getCurrencyCode());
