@@ -37,6 +37,7 @@ use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
 use Sylius\Component\Resource\Factory\Factory;
+use Sylius\Component\Core\Factory\AddressFactory;
 use Webmozart\Assert\Assert;
 
 class OrderCreateService
@@ -44,7 +45,7 @@ class OrderCreateService
     private Factory $orderFactory;
     private CartItemFactoryInterface $orderItemFactory;
     private Factory $customerFactory;
-    private Factory $addressFactory;
+    private AddressFactory $addressFactory;
     private CustomerRepository $customerRepository;
     private OrderRepository $orderRepository;
     private ProductVariantRepository $productVariantRepository;
@@ -61,7 +62,7 @@ class OrderCreateService
         Factory $orderFactory,
         CartItemFactoryInterface $orderItemFactory,
         Factory $customerFactory,
-        Factory $addressFactory,
+        AddressFactory $addressFactory,
         PaymentFactoryInterface $paymentFactory,
         CustomerRepository $customerRepository,
         OrderRepository $orderRepository,
