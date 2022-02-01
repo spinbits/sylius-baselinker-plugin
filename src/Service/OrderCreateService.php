@@ -204,9 +204,7 @@ class OrderCreateService
         $stateMachine->apply(OrderCheckoutTransitions::TRANSITION_ADDRESS);
         $stateMachine->apply(OrderCheckoutTransitions::TRANSITION_SKIP_SHIPPING);
         $stateMachine->apply(OrderCheckoutTransitions::TRANSITION_SELECT_PAYMENT);
-        if ($stateMachine->can(OrderCheckoutTransitions::TRANSITION_COMPLETE)) {
-            $stateMachine->apply(OrderCheckoutTransitions::TRANSITION_COMPLETE);
-        }
+        $stateMachine->apply(OrderCheckoutTransitions::TRANSITION_COMPLETE);
     }
 
     private function markPayment(OrderInterface $order, bool $paid): void
