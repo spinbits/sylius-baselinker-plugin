@@ -44,6 +44,7 @@ class OrderCreateService
     private Factory $orderFactory;
     private CartItemFactoryInterface $orderItemFactory;
     private Factory $customerFactory;
+    private Factory $addressFactory;
     private CustomerRepository $customerRepository;
     private OrderRepository $orderRepository;
     private ProductVariantRepository $productVariantRepository;
@@ -60,6 +61,7 @@ class OrderCreateService
         Factory $orderFactory,
         CartItemFactoryInterface $orderItemFactory,
         Factory $customerFactory,
+        Factory $addressFactory,
         PaymentFactoryInterface $paymentFactory,
         CustomerRepository $customerRepository,
         OrderRepository $orderRepository,
@@ -82,6 +84,7 @@ class OrderCreateService
         $this->orderItemQuantityModifier = $orderItemQuantityModifier;
         $this->orderProcessor = $orderProcessor;
         $this->customerFactory = $customerFactory;
+        $this->addressFactory = $addressFactory;
         $this->channelContext = $channelContext;
         $this->stateMachineFactory = $stateMachineFactory;
         $this->paymentFactory = $paymentFactory;
@@ -151,7 +154,7 @@ class OrderCreateService
 
     private function getAddress(OrderAddModel $orderAddModel, CustomerInterface $customer): Address
     {
-        $address = new Address();
+        $address = $this->addressFactory->createNew();
         $address->setFirstName($orderAddModel->getDeliveryFullname() ?? "");
         $address->setLastName("");
         $address->setPostcode("");
