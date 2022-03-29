@@ -34,9 +34,6 @@ jobs:
                     -
                         sylius: ~1.10.0
                         symfony: ^4.4
-                    -
-                        sylius: ~1.10.0
-                        symfony: 5.4
 
         env:
             APP_ENV: test
