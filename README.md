@@ -38,7 +38,7 @@ If you need some help with Sylius development, don't hesitate to contact us dire
 5. Imports Plugin XML config file:
     ```
         <imports>
-            <import resource="@SyliusBaselinkerPlugin/Resources/services.xml"/>
+            <import resource="@SpinbitsSyliusBaselinkerPlugin/Resources/services.xml"/>
         </imports>
     ```            
 6. Run migrations:
