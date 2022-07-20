@@ -11,19 +11,19 @@ Baselinker can help you automate sale processes with almost 16000 different prov
 This package is implementation of communication with BaseLinker Connector ("integration file"). 
 For further details please refer to https://developers.baselinker.com/shops_api/ 
 
-After installation your baselinker connector url will ba available under path: `/baselinker-connector` of your shop.
+After installation your Baselinker connector url will be available under path: `/baselinker-connector` of your shop.
 
 ## Baselinker Configuration
 
-1. Login to your baslinker account: https://login.baselinker.com/
+1. Login to your Baselinker account: https://login.baselinker.com/
 2. Click integrations: https://panel-b.baselinker.com/list_integrations.php
     ![image](./docs/img/integration.jpg)
-3. Configure your integration as showed below. Remeber to replace your shop domain in url.
+3. Configure your integration as showed below. Remember to replace your shop domain in url.
     ![image](./docs/img/configuration.jpg)
 4. Copy communication password and set it your `.env` file as showed below:
     `BASELINKER_PASSWORD='example-password-change-it'`
 
-## Slius Quickstart Installation
+## Sylius Quickstart Installation
 
 Follow the steps to install the plugin on your Sylius application:
 
@@ -46,7 +46,7 @@ Follow the steps to install the plugin on your Sylius application:
     
     ```
 
-4. Set Baselinker passowrd: `.env`
+4. Set Baselinker password: `.env`
     ```
     BASELINKER_PASSWORD='example-password'
     ```
