@@ -37,7 +37,7 @@ abstract class AbstractDto
      * @param mixed $value
      * @return bool|float|int|string|null
      */
-    private function cast(string $name, mixed $value): ?mixed
+    private function cast(string $name, mixed $value): mixed
     {
         $reflection = new ReflectionClass($this);
         if (!$reflection->hasProperty($name)) {
