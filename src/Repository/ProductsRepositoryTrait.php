@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Marcin Hubert <>
  * @author Jakub Lech <info@smartbyte.pl>
@@ -11,11 +12,11 @@ declare(strict_types=1);
 
 namespace Spinbits\SyliusBaselinkerPlugin\Repository;
 
-use Spinbits\BaselinkerSdk\Filter\AbstractFilter;
-use Spinbits\BaselinkerSdk\Filter\PageOnlyFilter;
-use Spinbits\BaselinkerSdk\Filter\PaginatorFilterInterface;
-use Spinbits\BaselinkerSdk\Filter\ProductDetailsFilter;
-use Spinbits\BaselinkerSdk\Filter\ProductListFilter;
+use Spinbits\SyliusBaselinkerPlugin\Filter\AbstractFilter;
+use Spinbits\SyliusBaselinkerPlugin\Filter\PageOnlyFilter;
+use Spinbits\SyliusBaselinkerPlugin\Filter\PaginatorFilterInterface;
+use Spinbits\SyliusBaselinkerPlugin\Filter\ProductDetailsFilter;
+use Spinbits\SyliusBaselinkerPlugin\Filter\ProductListFilter;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Exception\LessThan1CurrentPageException;
 use Pagerfanta\Pagerfanta;
@@ -44,7 +45,8 @@ trait ProductsRepositoryTrait
         return $this->appendPaginator($filter, $queryBuilder);
     }
 
-    public function fetchBaseLinkerPriceData(PageOnlyFilter $filter): Pagerfanta {
+    public function fetchBaseLinkerPriceData(PageOnlyFilter $filter): Pagerfanta
+    {
         $queryBuilder = $this->prepareBaseLinkerQueryBuilder($filter);
         $queryBuilder->andWhere('o.enabled = true');
 

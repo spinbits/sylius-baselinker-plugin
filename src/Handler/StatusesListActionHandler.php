@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Jakub Lech <info@smartbyte.pl>
  *
@@ -11,8 +12,8 @@ declare(strict_types=1);
 namespace Spinbits\SyliusBaselinkerPlugin\Handler;
 
 use Sylius\Component\Core\OrderCheckoutStates;
-use Spinbits\BaselinkerSdk\Handler\HandlerInterface;
-use Spinbits\BaselinkerSdk\Rest\Input;
+use Spinbits\SyliusBaselinkerPlugin\Handler\HandlerInterface;
+use Spinbits\SyliusBaselinkerPlugin\Rest\Input;
 
 class StatusesListActionHandler implements HandlerInterface
 {

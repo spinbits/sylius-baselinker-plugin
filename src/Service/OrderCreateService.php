@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Marcin Hubert <>
  * @author Jakub Lech <info@smartbyte.pl>
@@ -12,8 +13,8 @@ declare(strict_types=1);
 namespace Spinbits\SyliusBaselinkerPlugin\Service;
 
 use Doctrine\Persistence\ObjectManager;
-use Spinbits\BaselinkerSdk\Model\OrderAddModel;
-use Spinbits\BaselinkerSdk\Model\ProductModel;
+use Spinbits\SyliusBaselinkerPlugin\Model\OrderAddModel;
+use Spinbits\SyliusBaselinkerPlugin\Model\ProductModel;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Factory\CartItemFactoryInterface;
 use Sylius\Component\Core\Model\Address;
@@ -231,6 +232,6 @@ class OrderCreateService
         /** @var PaymentMethod|null $paymentMethod */
         $paymentMethod = $this->paymentMethodRepository->findOneBy([]);
 
-        return $paymentMethod instanceOf PaymentMethod ? (string) $paymentMethod->getCode() : 'baselinker payment';
+        return $paymentMethod instanceof PaymentMethod ? (string) $paymentMethod->getCode() : 'baselinker payment';
     }
 }

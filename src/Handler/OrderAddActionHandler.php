@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Marcin Hubert <>
  * @author Jakub Lech <info@smartbyte.pl>
@@ -11,12 +12,12 @@ declare(strict_types=1);
 
 namespace Spinbits\SyliusBaselinkerPlugin\Handler;
 
-use Spinbits\BaselinkerSdk\Model\OrderAddModel;
+use Spinbits\SyliusBaselinkerPlugin\Model\OrderAddModel;
 use Spinbits\SyliusBaselinkerPlugin\Entity\Order\Order;
 use Spinbits\SyliusBaselinkerPlugin\Service\OrderCreateService;
-use Spinbits\BaselinkerSdk\Handler\HandlerInterface;
-use Spinbits\BaselinkerSdk\Rest\Exception\InvalidArgumentException;
-use Spinbits\BaselinkerSdk\Rest\Input;
+use Spinbits\SyliusBaselinkerPlugin\Handler\HandlerInterface;
+use Spinbits\SyliusBaselinkerPlugin\Rest\Exception\InvalidArgumentException;
+use Spinbits\SyliusBaselinkerPlugin\Rest\Input;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;

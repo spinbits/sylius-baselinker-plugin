@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Jakub Lech <info@smartbyte.pl>
  *
@@ -10,8 +11,8 @@ declare(strict_types=1);
 
 namespace Spinbits\SyliusBaselinkerPlugin\Controller;
 
-use Spinbits\BaselinkerSdk\RequestHandler;
-use Spinbits\BaselinkerSdk\Rest\Input;
+use Spinbits\SyliusBaselinkerPlugin\RequestHandler;
+use Spinbits\SyliusBaselinkerPlugin\Rest\Input;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Marcin Hubert <>
  * @author Jakub Lech <info@smartbyte.pl>
@@ -85,7 +86,7 @@ class ProductMapper
     {
         /** @var TaxonInterface|null $mainTaxon */
         $mainTaxon = $product->getMainTaxon();
-        if ( $mainTaxon !== null) {
+        if ($mainTaxon !== null) {
             return (string) $mainTaxon->getCode();
         }
 

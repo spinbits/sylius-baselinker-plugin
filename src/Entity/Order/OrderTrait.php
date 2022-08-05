@@ -8,7 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 trait OrderTrait
 {
-
     /**
      * @var string|null
      *

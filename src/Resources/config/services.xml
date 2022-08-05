@@ -13,7 +13,7 @@
         <service id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductsDetailsActionHandler" autowire="true" autoconfigure="true"/>
         <service id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductsListActionHandler" autowire="true" autoconfigure="true"/>
         <service id="Spinbits\SyliusBaselinkerPlugin\Handler\StatusesListActionHandler" autowire="true" autoconfigure="true"/>
-        <service id="Spinbits\BaselinkerSdk\Handler\Common\SupportedMethodsActionHandler" autowire="true" autoconfigure="true"/>
+        <service id="Spinbits\SyliusBaselinkerPlugin\Handler\Common\SupportedMethodsActionHandler" autowire="true" autoconfigure="true"/>
 
         <service id="Spinbits\SyliusBaselinkerPlugin\Repository\BaseLinkerProductRepositoryInterface"
                  class="Spinbits\SyliusBaselinkerPlugin\Repository\ProductRepository" autowire="true" autoconfigure="true">
@@ -38,7 +38,7 @@
         <service id="Spinbits\SyliusBaselinkerPlugin\Mapper\ProductMapper" autowire="true" autoconfigure="true"/>
         <service id="Spinbits\SyliusBaselinkerPlugin\Mapper\ListProductMapper" autowire="true" autoconfigure="true"/>
 
-        <service id="Spinbits\BaselinkerSdk\RequestHandler">
+        <service id="Spinbits\SyliusBaselinkerPlugin\RequestHandler">
             <argument key="$password" type="string">%env(BASELINKER_PASSWORD)%</argument>
             <call method="registerHandler">
                 <argument type="string">FileVersion</argument>
@@ -78,7 +78,7 @@
             </call>
             <call method="registerHandler">
                 <argument type="string">SupportedMethods</argument>
-                <argument type="service" id="Spinbits\BaselinkerSdk\Handler\Common\SupportedMethodsActionHandler" />
+                <argument type="service" id="Spinbits\SyliusBaselinkerPlugin\Handler\Common\SupportedMethodsActionHandler" />
             </call>
         </service>
     </services>

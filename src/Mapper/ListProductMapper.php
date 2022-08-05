@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Marcin Hubert <>
  *
@@ -13,7 +14,7 @@ namespace Spinbits\SyliusBaselinkerPlugin\Mapper;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ProductVariant;
-use \Sylius\Component\Core\Model\Product;
+use Sylius\Component\Core\Model\Product;
 
 class ListProductMapper
 {

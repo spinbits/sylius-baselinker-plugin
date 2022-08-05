@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Jakub Lech <info@smartbyte.pl>
  *
@@ -15,7 +16,8 @@ use Behat\Gherkin\Node\PyStringNode;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use Tests\Spinbits\SyliusBaselinkerPlugin\Behat\Page\Shop\BaslinkerConnectorPage;
-use \Exception;
+use Exception;
+
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertSame;
 
@@ -89,7 +91,6 @@ class BaselinkerConnectorContext implements Context
                 ->client
                 ->request($httpMethod, $resource, $options);
         } catch (BadResponseException $e) {
-
             $response = $e->getResponse();
 
             if ($response === null) {
@@ -108,7 +109,7 @@ class BaselinkerConnectorContext implements Context
         $response = $this->getResponse();
         $contentType = $response->getHeader('Content-Type');
 
-        assertSame('application/json', $contentType[0], 'Content-type is '.$contentType[0]);
+        assertSame('application/json', $contentType[0], 'Content-type is ' . $contentType[0]);
         assertSame((int) $statusCode, (int) $response->getStatusCode());
     }
 
@@ -202,10 +203,11 @@ class BaselinkerConnectorContext implements Context
                     $difference[$key] = $value;
                 } else {
                     $new_diff = $this->arrayDiffKeysAssocRecursive($value, $array2[$key]);
-                    if (!empty($new_diff))
+                    if (!empty($new_diff)) {
                         $difference[$key] = $new_diff;
+                    }
                 }
-            } else if (!array_key_exists($key, $array2) /*|| $array2[$key] !== $value*/) {
+            } elseif (!array_key_exists($key, $array2) /*|| $array2[$key] !== $value*/) {
                 $difference[$key] = $value;
             }
         }

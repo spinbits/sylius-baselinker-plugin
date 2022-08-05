@@ -10,8 +10,7 @@
     "require": {
         "php": "^7.4 || ^8.0",
         "ext-json": "*",
-        "spinbits/baselinker-sdk": "^1.0",
-        "sylius/sylius": "~1.8.0 || ~1.9.0 || ~1.10.0",
+        "sylius/sylius": "~1.8.0 || ~1.9.0 || ~1.10.0 || ~1.11.0",
         "symfony/flex": "^1.10"
     },
     "conflict": {
@@ -54,6 +53,7 @@
         "phpstan/phpstan-webmozart-assert": "0.12.12",
         "phpunit/phpunit": "^9.5",
         "sensiolabs/security-checker": "^6.0",
+        "squizlabs/php_codesniffer": "^3.7",
         "sylius-labs/coding-standard": "^3.1",
         "symfony/browser-kit": "^4.4 || ^5.2",
         "symfony/debug-bundle": "^4.4 || ^5.2",
@@ -84,12 +84,24 @@
         "psr-4": {
             "Spinbits\\SyliusBaselinkerPlugin\\": "src/",
             "Tests\\Spinbits\\SyliusBaselinkerPlugin\\Application\\": "tests/Application/src",
-            "Tests\\Spinbits\\SyliusBaselinkerPlugin\\Behat\\": "tests/Behat"
+            "Tests\\Spinbits\\SyliusBaselinkerPlugin\\Behat\\": "tests/Behat",
+            "Tests\\Spinbits\\SyliusBaselinkerPlugin\\Unit\\": "tests/Unit"
         }
     },
     "autoload-dev": {
         "classmap": [
             "tests/Application/src/Kernel.php"
         ]
+    },
+    "scripts": {
+        "test": "phpunit",
+        "behat": "behat --colors --strict -vvv --no-interaction",
+        "check-style": "phpcs src tests",
+        "fix-style": "phpcbf src tests",
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd",
+            "security-checker security:check": "script"
+        }
     }
 }

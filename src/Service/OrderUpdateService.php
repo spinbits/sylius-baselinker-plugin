@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Marcin Hubert <>
  * @author Jakub Lech <info@smartbyte.pl>
@@ -13,7 +14,7 @@ namespace Spinbits\SyliusBaselinkerPlugin\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use SM\Factory\FactoryInterface as StateMachineFactory;
-use Spinbits\BaselinkerSdk\Model\OrderUpdateModel;
+use Spinbits\SyliusBaselinkerPlugin\Model\OrderUpdateModel;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\OrderRepository;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;

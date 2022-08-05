@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Jakub Lech <info@smartbyte.pl>
  *

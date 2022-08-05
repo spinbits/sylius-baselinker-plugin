@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Marcin Hubert <>
  * @author Jakub Lech <info@smartbyte.pl>
@@ -12,11 +13,11 @@ declare(strict_types=1);
 namespace Spinbits\SyliusBaselinkerPlugin\Handler;
 
 use Pagerfanta\Pagerfanta;
-use Spinbits\BaselinkerSdk\Handler\HandlerInterface;
+use Spinbits\SyliusBaselinkerPlugin\Handler\HandlerInterface;
 use Spinbits\SyliusBaselinkerPlugin\Repository\BaseLinkerProductRepositoryInterface;
 use Spinbits\SyliusBaselinkerPlugin\Mapper\ListProductMapper;
-use Spinbits\BaselinkerSdk\Filter\ProductListFilter;
-use Spinbits\BaselinkerSdk\Rest\Input;
+use Spinbits\SyliusBaselinkerPlugin\Filter\ProductListFilter;
+use Spinbits\SyliusBaselinkerPlugin\Rest\Input;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\Product;
