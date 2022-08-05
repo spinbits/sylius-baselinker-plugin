@@ -71,7 +71,7 @@ class OrderAddModel extends AbstractDto
     public function __construct(Input $input)
     {
         $instance = $this;
-        $this->customHandlers['products'] = function ($key, $value) use ($instance) {
+        $this->customHandlers['products'] = function ($key, $value) use ($instance): void {
             $instance->mapProducts($value);
         };
 

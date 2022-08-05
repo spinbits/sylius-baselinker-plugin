@@ -23,7 +23,7 @@ class AbstractFilter
         $this->input = $input;
     }
 
-    protected function get(string $parameter, $default = null)
+    protected function get(string $parameter, ?mixed $default = null): ?mixed
     {
         return $this->input->get($parameter, $default);
     }
@@ -33,12 +33,12 @@ class AbstractFilter
         return isset($this->customFilter[$filterName]);
     }
 
-    public function setCustomFilter(string $filterName, $value): void
+    public function setCustomFilter(string $filterName, ?mixed $value): void
     {
         $this->customFilter[$filterName] = $value;
     }
 
-    public function getCustomFilter(string $filterName, $default = null)
+    public function getCustomFilter(string $filterName, ?mixed $default = null): ?mixed
     {
         return $this->customFilter[$filterName] ?? $default;
     }
