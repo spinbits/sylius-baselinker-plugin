@@ -28,7 +28,7 @@ abstract class AbstractDto
                 continue;
             }
 
-            $this->{$key} = $this->cast($key, $value);
+            $this->{'$key'} = $this->cast($key, $value);
         }
     }
 
@@ -43,13 +43,15 @@ abstract class AbstractDto
         if (!$reflection->hasProperty($name)) {
             return null;
         }
-        switch ($reflection->getProperty($name)->getType()->getName()) {
+        switch ($reflection->getProperty($name)->getType()?->getName()) {
             case 'bool':
                 return (bool) $value;
             case 'float':
                 return (float) $value;
             case 'int':
                 return (int) $value;
+            case null:
+                return null;
             case 'string':
             default:
                 return (string) $value;
