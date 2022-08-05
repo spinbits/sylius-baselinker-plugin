@@ -19,6 +19,8 @@ abstract class AbstractDto
     protected array $customHandlers = [];
     protected Input $input;
 
+    protected array $values = [];
+
     public function __construct(Input $input)
     {
         $this->input = $input;
@@ -28,7 +30,7 @@ abstract class AbstractDto
                 continue;
             }
 
-            $this->{'$key'} = $this->cast($key, $value);
+            $this->values[$key] = $this->cast($key, $value);
         }
     }
 
@@ -40,9 +42,10 @@ abstract class AbstractDto
     private function cast(string $name, mixed $value): mixed
     {
         $reflection = new ReflectionClass($this);
-        if (!$reflection->hasProperty($name)) {
+        if (!$reflection->hasProperty($name) || !$reflection->getProperty($name)->hasType()) {
             return null;
         }
+
         switch ($reflection->getProperty($name)->getType()?->getName()) {
             case 'bool':
                 return (bool) $value;
