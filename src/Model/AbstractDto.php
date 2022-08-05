@@ -19,8 +19,6 @@ abstract class AbstractDto
     protected array $customHandlers = [];
     protected Input $input;
 
-    protected array $values = [];
-
     public function __construct(Input $input)
     {
         $this->input = $input;
@@ -30,7 +28,7 @@ abstract class AbstractDto
                 continue;
             }
 
-            $this->values[$key] = $this->cast($key, $value);
+            $this->{$key} = $this->cast($key, $value);
         }
     }
 
