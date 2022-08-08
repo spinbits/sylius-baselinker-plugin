@@ -124,7 +124,7 @@ class OrderAddModel
     }
 
     /**
-     * @param mixed $value
+     * @param string $value
      * @return array|ProductModel[]
      * @throws \JsonException
      */
