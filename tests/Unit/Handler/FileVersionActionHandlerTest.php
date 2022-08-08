@@ -28,7 +28,7 @@ class FileVersionActionHandlerTest extends TestCase
         $result = $sut->handle($input);
 
         $this->assertSame([
-            'platform' => "Common spinbits baslinker plugin",
+            'platform' => "Sylius by spinbits",
             'version' => "4.0.0",
             'standard' => 4,
         ], $result);

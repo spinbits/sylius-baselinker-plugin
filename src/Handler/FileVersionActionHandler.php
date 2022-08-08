@@ -18,7 +18,7 @@ class FileVersionActionHandler implements HandlerInterface
     public function handle(Input $input): array
     {
         return [
-            'platform' => "Common spinbits baslinker plugin",
+            'platform' => "Sylius by spinbits",
             'version' => "4.0.0",
             'standard' => 4,
         ];
