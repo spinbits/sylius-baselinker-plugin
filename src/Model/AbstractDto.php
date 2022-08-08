@@ -27,8 +27,8 @@ abstract class AbstractDto
                 $this->customHandlers[$key]($key, $value);
                 continue;
             }
-            $property = '$key';
-            $this->$property = $this->cast($key, $value);
+
+            $this->{$key} = $this->cast($key, $value);
         }
     }
 
