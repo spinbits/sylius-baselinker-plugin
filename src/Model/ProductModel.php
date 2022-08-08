@@ -11,18 +11,30 @@ declare(strict_types=1);
 
 namespace Spinbits\SyliusBaselinkerPlugin\Model;
 
+use Spinbits\SyliusBaselinkerPlugin\Rest\Input;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class ProductModel extends AbstractDto
+class ProductModel
 {
-    protected ?string $id = null;
-    protected ?string $variant_id;
-    protected ?string $sku = null;
-    protected ?string $name = null;
-    protected ?int $price = null;
+    private string $id;
+    private string $variant_id;
+    private string $sku;
+    private string $name;
+    private int $price;
     /** @Assert\NotBlank */
-    protected int $quantity;
-    protected ?string $auction_id = null;
+    private int $quantity;
+    private string $auction_id;
+
+    public function __construct(Input $input)
+    {
+        $this->id = (string) $input->get('id');
+        $this->variant_id = (string)  $input->get('variant_id');
+        $this->sku = (string)  $input->get('sku');
+        $this->name = (string)  $input->get('name');
+        $this->price = (int) $input->get('price');
+        $this->quantity = (int) $input->get('quantity');
+        $this->auction_id = (string) $input->get('auction_id');
+    }
 
     public function getId(): ?string
     {

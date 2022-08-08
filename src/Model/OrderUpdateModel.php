@@ -11,22 +11,30 @@ declare(strict_types=1);
 
 namespace Spinbits\SyliusBaselinkerPlugin\Model;
 
+use Spinbits\SyliusBaselinkerPlugin\Rest\Input;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class OrderUpdateModel extends AbstractDto
+class OrderUpdateModel
 {
-    protected string $orders_ids;
+    private string $orders_ids;
 
     /**
      * @Assert\NotBlank
      * @Assert\Choice({"paid","status","delivery_number"})
      */
-    protected string $update_type;
+    private string $update_type;
 
     /**
      * @Assert\NotBlank
      */
-    protected string $update_value;
+    private string $update_value;
+
+    public function __construct(Input $input)
+    {
+        $this->orders_ids = (string) $input->get('orders_ids');
+        $this->update_type = (string) $input->get('update_type');
+        $this->update_value = (string) $input->get('update_value');
+    }
 
     /**
      * @Assert\NotBlank
