@@ -56,9 +56,27 @@ Follow the steps to install the plugin on your Sylius application:
             <import resource="@SpinbitsSyliusBaselinkerPlugin/Resources/services.xml"/>
         </imports>
     ```            
+   Or in `config/services.yaml`:
+   ```yaml
+    imports:
+        - { resource: '../vendor/spinbits/sylius-baselinker-plugin/src/Resources/config/services.xml' }
+   ```
 6. Run migrations:
     `bin/console doctrine:migrations:migrate`
 
+7. Test plugin:
+    in order to test plugin you should 
+    - replace `localhost` with your sylius domain 
+    - replace `example-password` with your baselinker password
+    
+    You may get supported methods:
+    
+    `curl -X POST -d 'bl_pass=example-password&action=SupportedMethods' http://localhost/baselinker-connector`
+    
+    You may get version of integration:
+    
+    `curl -X POST -d 'bl_pass=example-password&action=FileVersion' http://localhost/baselinker-connector`
+        
 ## Help
 If you need some help with Sylius development, don't hesitate to contact us directly. You can send us an email at office@spinbits.io
 
