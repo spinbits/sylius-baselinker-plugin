@@ -64,19 +64,27 @@ Follow the steps to install the plugin on your Sylius application:
 6. Run migrations:
     `bin/console doctrine:migrations:migrate`
 
-7. Test plugin:
-    in order to test plugin you should 
-    - replace `localhost` with your sylius domain 
-    - replace `example-password` with your baselinker password
+## Test plugin:
+
+### Basic tests
+
+in order to test plugin you should 
+- replace `localhost` with your sylius domain 
+- replace `example-password` with your baselinker password
     
-    You may get supported methods:
+You may get supported methods:
     
-    `curl -X POST -d 'bl_pass=example-password&action=SupportedMethods' http://localhost/baselinker-connector`
+`curl -X POST -d 'bl_pass=example-password&action=SupportedMethods' http://localhost/baselinker-connector`
     
-    You may get version of integration:
+You may get version of integration:
     
-    `curl -X POST -d 'bl_pass=example-password&action=FileVersion' http://localhost/baselinker-connector`
+`curl -X POST -d 'bl_pass=example-password&action=FileVersion' http://localhost/baselinker-connector`
         
+### Using Baslinker tester
+go to: 
+    `https://developers.baselinker.com/shops_api/index.php?tester=1`     
+and follow the instructions.
+
 ## Help
 If you need some help with Sylius development, don't hesitate to contact us directly. You can send us an email at office@spinbits.io
 
