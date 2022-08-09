@@ -15,7 +15,6 @@ namespace Spinbits\SyliusBaselinkerPlugin\Handler;
 use Pagerfanta\Pagerfanta;
 use Spinbits\SyliusBaselinkerPlugin\Repository\BaseLinkerProductRepositoryInterface;
 use Spinbits\SyliusBaselinkerPlugin\Filter\PageOnlyFilter;
-use Spinbits\SyliusBaselinkerPlugin\Handler\HandlerInterface;
 use Spinbits\SyliusBaselinkerPlugin\Rest\Input;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
@@ -37,19 +36,15 @@ class ProductPricesActionHandler implements HandlerInterface
 
     public function handle(Input $input): array
     {
-        $filter = new PageOnlyFilter($input, $this->channelContext->getChannel());
+        /** @var ChannelInterface $channel */
+        $channel = $this->channelContext->getChannel();
+        $filter = new PageOnlyFilter($input, $channel);
 
-        $channelCode = (string) $this->channelContext->getChannel()->getCode();
         $paginator = $this->productRepository->fetchBaseLinkerPriceData($filter);
         $return = [];
 
         /** @var Product[] $paginator */
         foreach ($paginator as $product) {
-            $channel = $this->getProductChannel($product, $channelCode);
-            if ($channel === null) {
-                continue;
-            }
-
             $variants = [];
             /** @var ProductVariantInterface $variant */
             foreach ($product->getEnabledVariants() as $variant) {
@@ -71,23 +66,5 @@ class ProductPricesActionHandler implements HandlerInterface
         }
         $price = (int) $pricing->getPrice();
         return  $price / 100;
-    }
-
-    /**
-     * @param Product $product
-     * @param string $channelCode
-     *
-     * @return ChannelInterface|null
-     */
-    private function getProductChannel(Product $product, string $channelCode): ?ChannelInterface
-    {
-        /** @var ChannelInterface $channel */
-        foreach ($product->getChannels() as $channel) {
-            if ($channel->getCode() === $channelCode) {
-                return $channel;
-            }
-        }
-
-        return null;
     }
 }

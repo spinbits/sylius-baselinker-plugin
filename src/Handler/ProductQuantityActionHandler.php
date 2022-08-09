@@ -15,7 +15,6 @@ namespace Spinbits\SyliusBaselinkerPlugin\Handler;
 use Pagerfanta\Pagerfanta;
 use Spinbits\SyliusBaselinkerPlugin\Repository\BaseLinkerProductRepositoryInterface;
 use Spinbits\SyliusBaselinkerPlugin\Filter\PageOnlyFilter;
-use Spinbits\SyliusBaselinkerPlugin\Handler\HandlerInterface;
 use Spinbits\SyliusBaselinkerPlugin\Rest\Input;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
