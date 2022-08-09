@@ -181,6 +181,7 @@ class OrderCreateService
             /** @var Product|null $p */
             $p = $this->productVariantRepository->findBy(['productId' => $product->getId()]);
             if (null !== $p) {
+                /** @var ProductVariantInterface|null $variant */
                 $variant = $p->getEnabledVariants()->first();
             }
         }
