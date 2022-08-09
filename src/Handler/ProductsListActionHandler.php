@@ -22,6 +22,7 @@ use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\Product;
 use Sylius\Component\Core\Model\ProductVariantInterface;
+use Webmozart\Assert\Assert;
 
 class ProductsListActionHandler implements HandlerInterface
 {
@@ -41,44 +42,21 @@ class ProductsListActionHandler implements HandlerInterface
 
     public function handle(Input $input): array
     {
-        $filter = new ProductListFilter($input);
-        $filter->setCustomFilter('channel_code', $this->channelContext->getChannel()->getCode());
+        /** @var ChannelInterface $channel */
+        $channel = $this->channelContext->getChannel();
+        $filter = new ProductListFilter($input, $channel);
 
-        $channelCode = (string) $this->channelContext->getChannel()->getCode();
         $paginator = $this->productRepository->fetchBaseLinkerData($filter);
         $return = [];
         /** @var Product[] $paginator */
         foreach ($paginator as $product) {
-            $channel = $this->getProductChannel($product, $channelCode);
-            if ($channel === null) {
-                continue;
-            }
-
             /** @var ProductVariantInterface $variant */
             foreach ($this->mapper->map($product, $channel) as $variant) {
-                $return[(int) $product->getId()] = $variant;
+                $return[(int) $variant->getId()] = $variant;
             }
         }
         /** @var Pagerfanta $paginator */
         $return['pages'] = $paginator->getNbPages();
         return  $return;
-    }
-
-    /**
-     * @param Product $product
-     * @param string $channelCode
-     *
-     * @return ChannelInterface|null
-     */
-    private function getProductChannel(Product $product, string $channelCode): ?ChannelInterface
-    {
-        /** @var ChannelInterface $channel */
-        foreach ($product->getChannels() as $channel) {
-            if ($channel->getCode() === $channelCode) {
-                return $channel;
-            }
-        }
-
-        return null;
     }
 }

@@ -12,15 +12,17 @@ declare(strict_types=1);
 namespace Spinbits\SyliusBaselinkerPlugin\Filter;
 
 use Spinbits\SyliusBaselinkerPlugin\Rest\Input;
+use Sylius\Component\Core\Model\ChannelInterface;
 
 class AbstractFilter
 {
     protected Input $input;
-    private array $customFilter = [];
+    private ?ChannelInterface $channel;
 
-    public function __construct(Input $input)
+    public function __construct(Input $input, ChannelInterface $channel = null)
     {
         $this->input = $input;
+        $this->channel = $channel;
     }
 
     protected function get(string $parameter, mixed $default = null): mixed
@@ -28,18 +30,13 @@ class AbstractFilter
         return $this->input->get($parameter, $default);
     }
 
-    public function hasCustomFilter(string $filterName): bool
+    public function hasChannel(): bool
     {
-        return isset($this->customFilter[$filterName]);
+        return $this->channel !== null;
     }
 
-    public function setCustomFilter(string $filterName, mixed $value): void
+    public function getChannel(): ?ChannelInterface
     {
-        $this->customFilter[$filterName] = $value;
-    }
-
-    public function getCustomFilter(string $filterName, mixed $default = null): mixed
-    {
-        return $this->customFilter[$filterName] ?? $default;
+        return $this->channel;
     }
 }

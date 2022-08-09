@@ -15,6 +15,7 @@ use Spinbits\SyliusBaselinkerPlugin\Filter\AbstractFilter;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Spinbits\SyliusBaselinkerPlugin\Rest\Input;
+use Sylius\Component\Core\Model\ChannelInterface;
 
 /** Class AbstractFilterTest */
 class AbstractFilterTest extends TestCase
@@ -33,38 +34,22 @@ class AbstractFilterTest extends TestCase
     }
 
     /** @test */
-    public function testSetCustomFilter()
+    public function testSetChannel()
     {
-        $result = $this->sut->setCustomFilter('filter', 'value');
+        $input = $this->createMock(Input::class);
+        $channel = $this->createMock(ChannelInterface::class);
+
+        $this->sut = new AbstractFilter($input, $channel);
+
+        $this->assertTrue($this->sut->hasChannel());
+        $this->assertInstanceOf(ChannelInterface::class, $this->sut->getChannel());
+    }
+
+    /** @test */
+    public function testGetChannelNullAsDefaultValue()
+    {
+        $result = $this->sut->getChannel();
 
         $this->assertNull($result);
-    }
-
-    /** @test */
-    public function testGetCustomFilter()
-    {
-        $this->sut->setCustomFilter('filter', 'value');
-        $result = $this->sut->getCustomFilter('filter');
-
-        $this->assertSame('value', $result);
-    }
-
-    /** @test */
-    public function testGetCustomFilterNullAsDefaultValue()
-    {
-        $result = $this->sut->getCustomFilter('filter');
-
-        $this->assertNull($result);
-    }
-
-    /** @test */
-    public function testHasCustomFilter()
-    {
-        $result = $this->sut->hasCustomFilter('filter');
-        $this->assertFalse($result);
-
-        $this->sut->setCustomFilter('filter', 'value');
-        $result = $this->sut->hasCustomFilter('filter');
-        $this->assertTrue($result);
     }
 }

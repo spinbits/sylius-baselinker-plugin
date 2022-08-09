@@ -41,19 +41,15 @@ class ProductsDetailsActionHandler implements HandlerInterface
 
     public function handle(Input $input): array
     {
-        $filter = new ProductDetailsFilter($input);
-        $filter->setCustomFilter('channel_code', $this->channelContext->getChannel()->getCode());
+        /** @var ChannelInterface $channel */
+        $channel = $this->channelContext->getChannel();
+        $filter = new ProductDetailsFilter($input, $channel);
 
-        $channelCode = (string) $this->channelContext->getChannel()->getCode();
         $paginator = $this->productRepository->fetchBaseLinkerDetailedData($filter);
 
         $return = [];
         /** @var Product[] $paginator */
         foreach ($paginator as $product) {
-            $channel = $this->getProductChannel($product, $channelCode);
-            if ($channel === null) {
-                continue;
-            }
             /** @var ProductVariantInterface $variant */
             foreach ($this->mapper->map($product, $channel) as $variant) {
                 $return[(int) $product->getId()] = $variant;
@@ -62,23 +58,5 @@ class ProductsDetailsActionHandler implements HandlerInterface
         /** @var Pagerfanta $paginator */
         $return['pages'] = $paginator->getNbPages();
         return $return;
-    }
-
-    /**
-     * @param Product $product
-     * @param string $channelCode
-     *
-     * @return ChannelInterface|null
-     */
-    private function getProductChannel(Product $product, string $channelCode): ?ChannelInterface
-    {
-        /** @var ChannelInterface $channel */
-        foreach ($product->getChannels() as $channel) {
-            if ($channel->getCode() === $channelCode) {
-                return $channel;
-            }
-        }
-
-        return null;
     }
 }

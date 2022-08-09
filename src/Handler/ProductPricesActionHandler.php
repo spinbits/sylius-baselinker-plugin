@@ -37,8 +37,7 @@ class ProductPricesActionHandler implements HandlerInterface
 
     public function handle(Input $input): array
     {
-        $filter = new PageOnlyFilter($input);
-        $filter->setCustomFilter('channel_code', $this->channelContext->getChannel()->getCode());
+        $filter = new PageOnlyFilter($input, $this->channelContext->getChannel());
 
         $channelCode = (string) $this->channelContext->getChannel()->getCode();
         $paginator = $this->productRepository->fetchBaseLinkerPriceData($filter);

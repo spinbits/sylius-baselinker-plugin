@@ -17,7 +17,7 @@ class Input
     private const POST_PASSWORD_FIELD = 'bl_pass';
     private const POST_ACTION_FIELD = 'action';
 
-    public array $parameters;
+    private array $parameters;
 
     /**
      * @param array<string, mixed> $postData

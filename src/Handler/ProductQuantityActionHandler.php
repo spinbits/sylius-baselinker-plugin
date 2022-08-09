@@ -18,6 +18,7 @@ use Spinbits\SyliusBaselinkerPlugin\Filter\PageOnlyFilter;
 use Spinbits\SyliusBaselinkerPlugin\Handler\HandlerInterface;
 use Spinbits\SyliusBaselinkerPlugin\Rest\Input;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
+use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\Product;
 use Sylius\Component\Core\Model\ProductVariantInterface;
 
@@ -36,8 +37,9 @@ class ProductQuantityActionHandler implements HandlerInterface
 
     public function handle(Input $input): array
     {
-        $filter = new PageOnlyFilter($input);
-        $filter->setCustomFilter('channel_code', $this->channelContext->getChannel()->getCode());
+        /** @var ChannelInterface $channel */
+        $channel = $this->channelContext->getChannel();
+        $filter = new PageOnlyFilter($input, $channel);
 
         $paginator = $this->productRepository->fetchBaseLinkerQuantityData($filter);
         $return = [];

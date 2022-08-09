@@ -20,18 +20,20 @@ use Sylius\Component\Taxonomy\Model\TaxonInterface;
 class ProductsCategoriesActionHandler implements HandlerInterface
 {
     private TaxonRepositoryInterface $taxonRepository;
-    private const BLACK_LIST = ['MENU_CATEGORY'];
+    private array $skipTaxonCodes;
 
     public function __construct(
-        TaxonRepositoryInterface $taxonRepository
+        TaxonRepositoryInterface $taxonRepository,
+        array $skipTaxonCodes = []
     ) {
         $this->taxonRepository = $taxonRepository;
+        $this->skipTaxonCodes = $skipTaxonCodes;
     }
 
     public function handle(Input $input): array
     {
         /** @var TaxonInterface[] $taxons */
-        $taxons = $this->taxonRepository->findAll();
+        $taxons = $this->taxonRepository->findBy(['enabled' => true]);
 
         $return = [];
         foreach ($taxons as $taxon) {
@@ -49,6 +51,6 @@ class ProductsCategoriesActionHandler implements HandlerInterface
      */
     private function canHandle(TaxonInterface $taxon): bool
     {
-        return $taxon->isEnabled() && !in_array($taxon->getCode(), self::BLACK_LIST, true);
+        return !in_array($taxon->getCode(), $this->skipTaxonCodes, true);
     }
 }

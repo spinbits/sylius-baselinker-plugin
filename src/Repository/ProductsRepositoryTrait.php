@@ -60,13 +60,15 @@ trait ProductsRepositoryTrait
 
     private function prepareBaseLinkerQueryBuilder(AbstractFilter $filter): QueryBuilder
     {
-        $queryBuilder = $this->createQueryBuilder('o')
-            ->distinct();
+        $queryBuilder = $this->createQueryBuilder('o');
 
-        $queryBuilder
-            ->leftJoin('o.channels', 'channel')
-            ->andWhere('channel.code = :defaultChannelCode')
-            ->setParameter('defaultChannelCode', $filter->getCustomFilter('channel_code'));
+        if ($filter->hasChannel()) {
+            $queryBuilder
+                ->andWhere(':channel MEMBER OF o.channels')
+                ->setParameter('channel', $filter->getChannel());
+        }
+
+        $queryBuilder->distinct();
 
         return $queryBuilder;
     }
@@ -150,8 +152,8 @@ trait ProductsRepositoryTrait
     private function filterByCategory(QueryBuilder $queryBuilder, string $categoryCode): void
     {
         $queryBuilder
-            ->join('o.productTaxons', 'productTaxon')
-            ->join('productTaxon.taxon', 'taxon')
+            ->innerJoin('o.productTaxons', 'productTaxon')
+            ->innerJoin('productTaxon.taxon', 'taxon')
             ->andWhere('taxon.code = :taxonCode')
             ->setParameter('taxonCode', $categoryCode);
     }
