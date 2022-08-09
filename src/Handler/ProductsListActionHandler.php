@@ -52,7 +52,7 @@ class ProductsListActionHandler implements HandlerInterface
         foreach ($paginator as $product) {
             /** @var ProductVariantInterface $variant */
             foreach ($this->mapper->map($product, $channel) as $variant) {
-                $return[(int) $product->getId()] = $variant;
+                $return[$variant['sku']] = $variant;
             }
         }
         /** @var Pagerfanta $paginator */
