@@ -30,11 +30,11 @@ class ListProductMapper
         /** @var ProductVariant $variant */
         foreach ($product->getVariants() as $variant) {
             yield [
-                'name' => $product->getName(),
+                'name' => $product->getName() . ' ' . $variant->getName(),
                 'quantity' => $variant->getOnHand(),
                 'price' => $this->getPrice($variant, $channel),
                 'ean' => null, // not required
-                'sku' => $product->getCode(), // not required
+                'sku' => $variant->getCode(), // not required
             ];
         }
     }
