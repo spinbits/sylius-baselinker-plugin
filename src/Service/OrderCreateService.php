@@ -178,7 +178,7 @@ class OrderCreateService
         /** @var ProductVariantInterface|null $variant */
         $variant = $this->productVariantRepository->find($product->getVariantId());
         if (null == $variant) {
-            /** @var ProductVariantInterface|null $p */
+            /** @var ProductVariantInterface|null $variant */
             $variant = $this->productVariantRepository->findOneBy(['productId' => $product->getId()]);
         }
 
