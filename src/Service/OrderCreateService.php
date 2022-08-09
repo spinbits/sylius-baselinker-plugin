@@ -178,12 +178,8 @@ class OrderCreateService
         /** @var ProductVariantInterface|null $variant */
         $variant = $this->productVariantRepository->find($product->getVariantId());
         if (null == $variant) {
-            /** @var Product|null $p */
-            $p = $this->productVariantRepository->findBy(['productId' => $product->getId()]);
-            if (null !== $p) {
-                /** @var ProductVariantInterface|null $variant */
-                $variant = $p->getEnabledVariants()->first();
-            }
+            /** @var ProductVariantInterface|null $p */
+            $variant = $this->productVariantRepository->findBy(['productId' => $product->getId()]);
         }
 
         $message = sprintf("Product variant with %s id was not found!", $product->getVariantId());
