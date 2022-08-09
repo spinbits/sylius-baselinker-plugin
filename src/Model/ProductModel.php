@@ -16,6 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class ProductModel
 {
+    /** @Assert\NotBlank */
     private string $id;
     private string $variant_id;
     private string $sku;

@@ -26,6 +26,7 @@ use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Component\Core\Model\OrderItemInterface;
 use Sylius\Component\Core\Model\Payment;
 use Sylius\Component\Core\Model\PaymentMethod;
+use Sylius\Component\Core\Model\Product;
 use Sylius\Component\Core\Model\ProductVariantInterface;
 use Sylius\Component\Core\OrderCheckoutTransitions;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
@@ -176,6 +177,13 @@ class OrderCreateService
     {
         /** @var ProductVariantInterface|null $variant */
         $variant = $this->productVariantRepository->find($product->getVariantId());
+        if (null == $variant) {
+            /** @var Product|null $p */
+            $p = $this->productVariantRepository->findBy(['productId' => $product->getId()]);
+            if (null !== $p) {
+                $variant = $p->getEnabledVariants()->first();
+            }
+        }
 
         $message = sprintf("Product variant with %s id was not found!", $product->getVariantId());
         Assert::notNull($variant, $message);
@@ -204,6 +212,8 @@ class OrderCreateService
     {
         $stateMachine = $this->stateMachineFactory->get($order, OrderCheckoutTransitions::GRAPH);
         $stateMachine->apply(OrderCheckoutTransitions::TRANSITION_ADDRESS);
+        $stateMachine->apply(OrderCheckoutTransitions::TRANSITION_SKIP_SHIPPING);
+        $stateMachine->apply(OrderCheckoutTransitions::TRANSITION_SKIP_PAYMENT);
         $stateMachine->apply(OrderCheckoutTransitions::TRANSITION_COMPLETE);
     }
 
