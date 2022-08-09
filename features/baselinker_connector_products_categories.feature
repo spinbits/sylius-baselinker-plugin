@@ -17,6 +17,7 @@ Feature: Programmer
         And I get response body:
             """
             {
+               "MENU_CATEGORY":"Category",
                "t_shirts":"Category \/ T-shirts",
                "mens_t_shirts":"Category \/ T-shirts \/ Men",
                "womens_t_shirts":"Category \/ T-shirts \/ Women",
