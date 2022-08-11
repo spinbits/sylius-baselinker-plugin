@@ -35,6 +35,14 @@ final class BaselinkerConnectorController extends AbstractController
 
     public function connectorAction(Request $request): Response
     {
+        if (!$request->isMethod('POST')) {
+            return new JsonResponse([
+                'error' => true,
+                'error_code' => 'no_password',
+                'error_text' => 'Wrong request'
+            ]);
+        }
+
         /** @var array<string, mixed> $input */
         $input = $request->request->all();
         $input = new Input($input);
