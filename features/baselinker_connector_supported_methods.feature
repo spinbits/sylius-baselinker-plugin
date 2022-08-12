@@ -17,6 +17,6 @@ Feature: Programmer
         And I get response body:
             """
             ["FileVersion","OrderAdd","OrderUpdate","ProductsPrices","ProductsQuantity","ProductsCategories",
-            "ProductsDetails","ProductsList","StatusesList","SupportedMethods"]
+            "ProductsData","ProductsList","StatusesList","SupportedMethods"]
             """
         Then I get a "200" response

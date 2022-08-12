@@ -10,7 +10,7 @@ Feature: Programmer
             """
             {
               "bl_pass": "example-password-change-it",
-              "action" : "ProductsDetails",
+              "action" : "ProductsData",
               "products_id": "18,19"
             }
             """
