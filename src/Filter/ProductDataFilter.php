@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Spinbits\SyliusBaselinkerPlugin\Filter;
 
-class ProductDetailsFilter extends AbstractFilter implements PaginatorFilterInterface
+class ProductDataFilter extends AbstractFilter implements PaginatorFilterInterface
 {
     public function getPage(): int
     {

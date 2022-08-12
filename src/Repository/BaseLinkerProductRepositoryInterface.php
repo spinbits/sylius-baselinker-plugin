@@ -14,7 +14,7 @@ namespace Spinbits\SyliusBaselinkerPlugin\Repository;
 
 use Pagerfanta\Pagerfanta;
 use Spinbits\SyliusBaselinkerPlugin\Filter\PageOnlyFilter;
-use Spinbits\SyliusBaselinkerPlugin\Filter\ProductDetailsFilter;
+use Spinbits\SyliusBaselinkerPlugin\Filter\ProductDataFilter;
 use Spinbits\SyliusBaselinkerPlugin\Filter\ProductListFilter;
 use Sylius\Component\Core\Model\Product;
 
@@ -26,5 +26,5 @@ interface BaseLinkerProductRepositoryInterface
 
     public function fetchBaseLinkerQuantityData(PageOnlyFilter $filter): Pagerfanta;
 
-    public function fetchBaseLinkerDetailedData(ProductDetailsFilter $filter): Pagerfanta;
+    public function fetchBaseLinkerDetailedData(ProductDataFilter $filter): Pagerfanta;
 }

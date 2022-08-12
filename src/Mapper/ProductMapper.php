@@ -49,10 +49,14 @@ class ProductMapper
     {
         /** @var LocaleInterface $defaultLocale */
         $defaultLocale = $channel->getDefaultLocale();
+        /** @var ProductVariant $variant */
+        $variant = $product->getVariants()->first();
         yield [
             'sku' => $product->getCode(),
-            'name' => $product->getName(),
-            'tax' => $this->getTax($product, $channel),
+            'name' => $product->getName() . ' ' . $variant->getName(),
+            'tax' => $this->getTax($variant, $channel),
+            'quantity' => $variant->getOnHand(),
+            'price' => $this->getPrice($variant, $channel),
             'description' => $product->getDescription(),
             'categoryId' => $this->getTaxon($product),
             'images' => $this->getImages($product),
@@ -69,17 +73,12 @@ class ProductMapper
         ];
     }
 
-    private function getTax(Product $product, ChannelInterface $channel): int
+    private function getTax(ProductVariant $variant, ChannelInterface $channel): int
     {
-        /** @var ProductVariant $variant */
-        $variant = $product->getVariants()->first();
         $criteria = ['zone' => $channel->getDefaultTaxZone()];
         $taxRate = $this->taxRateResolver->resolve($variant, $criteria);
 
-        if (null === $taxRate) {
-            return 0;
-        }
-        return (int) $taxRate->getAmount();
+        return intval($taxRate?->getAmount() * 100);
     }
 
     private function getTaxon(Product $product): string
@@ -118,12 +117,13 @@ class ProductMapper
     private function getVariants(Product $product, ChannelInterface $channel): array
     {
         $return = [];
+        $productName = $product->getName();
         /** @var ProductVariantInterface $variant */
         foreach ($product->getVariants() as $variant) {
             $quantity = (int) $variant->getOnHand() - (int) $variant->getOnHold();
             $return[(int) $variant->getId()] = [
-                'full_name' => $variant->getName(),
-                'name' => $variant->getName(),
+                'full_name' => $productName . ' ' . $variant->getName(),
+                'name' => $productName . ' ' . $variant->getName(),
                 'price' => $this->getPrice($variant, $channel),
                 'quantity' => $quantity,
                 'sku' => $variant->getCode(),
@@ -148,14 +148,8 @@ class ProductMapper
         return array_values($return);
     }
 
-    private function getPrice(ProductVariantInterface $productVariant, ChannelInterface $channel): float
+    private function getPrice(ProductVariant $variant, ChannelInterface $channel): float
     {
-        $pricing = $productVariant->getChannelPricingForChannel($channel);
-
-        if (null === $pricing) {
-            return 0;
-        }
-        $price = (int) $pricing->getPrice();
-        return  $price / 100;
+        return round(intval($variant->getChannelPricingForChannel($channel)?->getPrice()) / 100, 2);
     }
 }

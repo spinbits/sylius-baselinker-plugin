@@ -15,7 +15,7 @@ namespace Spinbits\SyliusBaselinkerPlugin\Repository;
 use Spinbits\SyliusBaselinkerPlugin\Filter\AbstractFilter;
 use Spinbits\SyliusBaselinkerPlugin\Filter\PageOnlyFilter;
 use Spinbits\SyliusBaselinkerPlugin\Filter\PaginatorFilterInterface;
-use Spinbits\SyliusBaselinkerPlugin\Filter\ProductDetailsFilter;
+use Spinbits\SyliusBaselinkerPlugin\Filter\ProductDataFilter;
 use Spinbits\SyliusBaselinkerPlugin\Filter\ProductListFilter;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Exception\LessThan1CurrentPageException;
@@ -37,7 +37,7 @@ trait ProductsRepositoryTrait
         return $this->appendPaginator($filter, $queryBuilder);
     }
 
-    public function fetchBaseLinkerDetailedData(ProductDetailsFilter $filter): Pagerfanta
+    public function fetchBaseLinkerDetailedData(ProductDataFilter $filter): Pagerfanta
     {
         $queryBuilder = $this->prepareBaseLinkerQueryBuilder($filter);
         $this->filterByIds($queryBuilder, $filter->getIds());
@@ -62,13 +62,10 @@ trait ProductsRepositoryTrait
     {
         $queryBuilder = $this->createQueryBuilder('o');
 
-        if ($filter->hasChannel()) {
-            $queryBuilder
-                ->andWhere(':channel MEMBER OF o.channels')
-                ->setParameter('channel', $filter->getChannel());
-        }
-
-        $queryBuilder->distinct();
+        $queryBuilder
+            ->distinct()
+            ->andWhere(':channel MEMBER OF o.channels')
+            ->setParameter('channel', $filter->getChannel());
 
         return $queryBuilder;
     }
@@ -166,8 +163,8 @@ trait ProductsRepositoryTrait
         $this->pricingsJoined = true;
         $queryBuilder
             ->join('o.variants', 'productVariant')
-            ->join('productVariant.channelPricings', 'pricing')
-            ->andWhere('pricing.channelCode = :defaultChannelCode');
+            ->join('productVariant.channelPricings', 'pricing');
+//            ->andWhere('pricing.channelCode = :channel');
     }
 
     private function filterQuantityTo(QueryBuilder $queryBuilder, float $getQuantityTo): void

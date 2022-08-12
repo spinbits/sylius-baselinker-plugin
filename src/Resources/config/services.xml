@@ -10,7 +10,7 @@
         <service id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductPricesActionHandler" autowire="true" autoconfigure="true"/>
         <service id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductQuantityActionHandler" autowire="true" autoconfigure="true"/>
         <service id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductsCategoriesActionHandler" autowire="true" autoconfigure="true"/>
-        <service id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductsDetailsActionHandler" autowire="true" autoconfigure="true"/>
+        <service id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductsDataActionHandler" autowire="true" autoconfigure="true"/>
         <service id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductsListActionHandler" autowire="true" autoconfigure="true"/>
         <service id="Spinbits\SyliusBaselinkerPlugin\Handler\StatusesListActionHandler" autowire="true" autoconfigure="true"/>
         <service id="Spinbits\SyliusBaselinkerPlugin\Handler\SupportedMethodsActionHandler" autowire="true" autoconfigure="true"/>
@@ -65,8 +65,8 @@
                 <argument type="service" id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductsCategoriesActionHandler" />
             </call>
             <call method="registerHandler">
-                <argument type="string">ProductsDetails</argument>
-                <argument type="service" id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductsDetailsActionHandler" />
+                <argument type="string">ProductsData</argument>
+                <argument type="service" id="Spinbits\SyliusBaselinkerPlugin\Handler\ProductsDataActionHandler" />
             </call>
             <call method="registerHandler">
                 <argument type="string">ProductsList</argument>

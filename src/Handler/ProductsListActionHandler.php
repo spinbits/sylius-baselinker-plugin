@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Spinbits\SyliusBaselinkerPlugin\Handler;
 
 use Pagerfanta\Pagerfanta;
-use Spinbits\SyliusBaselinkerPlugin\Handler\HandlerInterface;
 use Spinbits\SyliusBaselinkerPlugin\Repository\BaseLinkerProductRepositoryInterface;
 use Spinbits\SyliusBaselinkerPlugin\Mapper\ListProductMapper;
 use Spinbits\SyliusBaselinkerPlugin\Filter\ProductListFilter;
@@ -22,7 +21,6 @@ use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\Product;
 use Sylius\Component\Core\Model\ProductVariantInterface;
-use Webmozart\Assert\Assert;
 
 class ProductsListActionHandler implements HandlerInterface
 {

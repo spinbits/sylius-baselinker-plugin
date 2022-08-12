@@ -11,13 +11,13 @@ declare(strict_types=1);
 
 namespace Tests\Spinbits\SyliusBaselinkerPlugin\Unit\Filter;
 
-use Spinbits\SyliusBaselinkerPlugin\Filter\ProductDetailsFilter;
+use Spinbits\SyliusBaselinkerPlugin\Filter\ProductDataFilter;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Spinbits\SyliusBaselinkerPlugin\Rest\Input;
 
-/** Class ProductDetailsFilterTest */
-class ProductDetailsFilterTest extends TestCase
+/** Class ProductDataFilterTest */
+class ProductDataFilterTest extends TestCase
 {
     /** @test */
     public function testGetIds()
@@ -29,7 +29,7 @@ class ProductDetailsFilterTest extends TestCase
             ->with(...['products_id'])
             ->willReturn('1,2,3');
 
-        $this->sut = new ProductDetailsFilter($input);
+        $this->sut = new ProductDataFilter($input);
 
         $result = $this->sut->getIds();
 
@@ -44,7 +44,7 @@ class ProductDetailsFilterTest extends TestCase
         $input->expects($this->never())
             ->method('get');
 
-        $this->sut = new ProductDetailsFilter($input);
+        $this->sut = new ProductDataFilter($input);
 
         $result = $this->sut->getLimit();
         $this->assertEquals(50, $result);
@@ -60,7 +60,7 @@ class ProductDetailsFilterTest extends TestCase
             ->with(...['page'])
             ->willReturn(5);
 
-        $this->sut = new ProductDetailsFilter($input);
+        $this->sut = new ProductDataFilter($input);
 
         $result = $this->sut->getPage();
         $this->assertEquals(5, $result);
@@ -76,7 +76,7 @@ class ProductDetailsFilterTest extends TestCase
             ->with(...['page'])
             ->willReturn(-15);
 
-        $this->sut = new ProductDetailsFilter($input);
+        $this->sut = new ProductDataFilter($input);
 
         $result = $this->sut->getPage();
         $this->assertEquals(1, $result);
