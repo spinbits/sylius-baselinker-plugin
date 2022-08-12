@@ -148,7 +148,7 @@ class ProductMapper
         return array_values($return);
     }
 
-    private function getPrice(ProductVariant $variant, ChannelInterface $channel): float
+    private function getPrice(ProductVariantInterface $variant, ChannelInterface $channel): float
     {
         return round(intval($variant->getChannelPricingForChannel($channel)?->getPrice()) / 100, 2);
     }

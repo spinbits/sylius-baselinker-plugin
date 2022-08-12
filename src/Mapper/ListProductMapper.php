@@ -12,14 +12,14 @@ declare(strict_types=1);
 namespace Spinbits\SyliusBaselinkerPlugin\Mapper;
 
 use Sylius\Component\Core\Model\ChannelInterface;
-use Sylius\Component\Core\Model\ProductVariant;
 use Sylius\Component\Core\Model\Product;
+use Sylius\Component\Core\Model\ProductVariantInterface;
 
 class ListProductMapper
 {
     public function map(Product $product, ChannelInterface $channel): \Generator
     {
-        /** @var ProductVariant $variant */
+        /** @var ProductVariantInterface $variant */
         foreach ($product->getVariants() as $variant) {
             yield [
                 'name' => $product->getName() . ' ' . $variant->getName(),
@@ -28,12 +28,12 @@ class ListProductMapper
                 'ean' => null, // not required
                 'sku' => $variant->getCode(), // not required
                 'location' => 'default',
-                'currency' => $channel->getBaseCurrency()->getCode(),
+                'currency' => $channel->getBaseCurrency()?->getCode(),
             ];
         }
     }
 
-    private function getPrice(ProductVariant $variant, ChannelInterface $channel): float
+    private function getPrice(ProductVariantInterface $variant, ChannelInterface $channel): float
     {
         return round(intval($variant->getChannelPricingForChannel($channel)?->getPrice()) / 100, 2);
     }
