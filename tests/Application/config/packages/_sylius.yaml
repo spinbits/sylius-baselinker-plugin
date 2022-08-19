@@ -19,3 +19,9 @@ sylius_order:
         order:
             classes:
                 model: Tests\Spinbits\SyliusBaselinkerPlugin\Application\Entity\Order
+
+sylius_product:
+    resources:
+        product:
+            classes:
+                repository: Tests\Spinbits\SyliusBaselinkerPlugin\Application\Repository\ProductRepository
