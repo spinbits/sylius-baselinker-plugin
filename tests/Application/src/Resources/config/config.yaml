@@ -12,3 +12,4 @@ services:
 
   sylius_product.resources.product.repository:
     class: Tests\Spinbits\SyliusBaselinkerPlugin\Application\Repository\ProductRepository
+    alias: Spinbits\SyliusBaselinkerPlugin\Repository\BaseLinkerProductRepositoryInterface
