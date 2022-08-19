@@ -46,11 +46,34 @@ Follow the steps to install the plugin on your Sylius application:
     
     ```
 
-4. Set Baselinker password: `.env`
+4. Import trait to your ProductRepository entity: `src/Repository/ProductRepository.php`
+    ```
+    use Spinbits\SyliusBaselinkerPlugin\Repository\ProductsRepositoryTrait;
+    use Sylius\Bundle\CoreBundle\Doctrine\ORM\ProductRepository as BaseProductRepository;
+    
+    class ProductRepository extends BaseProductRepository
+    {
+        use ProductsRepositoryTrait;
+    }
+    
+    ```
+   Register this repository:
+   ```yaml
+    services:
+      _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+    
+      sylius_product.resources.product.repository:
+        class: App\Repository\ProductRepository
+    ```
+
+5. Set Baselinker password: `.env`
     ```
     BASELINKER_PASSWORD='example-password'
     ```
-5. Imports Plugin XML config file:
+6. Imports Plugin XML config file:
     ```
         <imports>
             <import resource="@SpinbitsSyliusBaselinkerPlugin/Resources/services.xml"/>
@@ -61,7 +84,7 @@ Follow the steps to install the plugin on your Sylius application:
     imports:
         - { resource: '../vendor/spinbits/sylius-baselinker-plugin/src/Resources/config/services.xml' }
    ```
-6. Run migrations:
+7. Run migrations:
     `bin/console doctrine:migrations:migrate`
 
 ## Test plugin:

@@ -3,3 +3,12 @@ sylius_order:
     order:
       classes:
         model: Tests\Spinbits\SyliusBaselinkerPlugin\Entity\Order
+
+services:
+  _defaults:
+    public: false
+    autowire: true
+    autoconfigure: true
+
+  sylius_product.resources.product.repository:
+    class: Tests\Spinbits\SyliusBaselinkerPlugin\Application\Repository\ProductRepository

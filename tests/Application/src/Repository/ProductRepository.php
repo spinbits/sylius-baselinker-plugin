@@ -9,11 +9,12 @@
 
 declare(strict_types=1);
 
-namespace Spinbits\SyliusBaselinkerPlugin\Repository;
+namespace Tests\Spinbits\SyliusBaselinkerPlugin\Application\Repository;
 
+use Spinbits\SyliusBaselinkerPlugin\Repository\ProductsRepositoryTrait;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\ProductRepository as BaseProductRepository;
 
-class ProductRepository extends BaseProductRepository implements BaseLinkerProductRepositoryInterface
+class ProductRepository extends BaseProductRepository
 {
     use ProductsRepositoryTrait;
 }
