@@ -69,6 +69,15 @@ Follow the steps to install the plugin on your Sylius application:
       sylius_product.resources.product.repository:
         class: App\Repository\ProductRepository
     ```
+   
+   Make sure there is repository replace with your namespace in `config/packages/_sylius.yaml` 
+   ```yaml
+    sylius_product:
+        resources:
+            product:
+                classes:
+                    repository: App\Repository\ProductRepository
+    ```
 
 5. Set Baselinker password: `.env`
     ```
