@@ -58,17 +58,6 @@ Follow the steps to install the plugin on your Sylius application:
     }
     
     ```
-   Register this repository:
-   ```yaml
-    services:
-      _defaults:
-        public: false
-        autowire: true
-        autoconfigure: true
-    
-      sylius_product.resources.product.repository:
-        class: App\Repository\ProductRepository
-    ```
    
    Make sure there is repository replace with your namespace in `config/packages/_sylius.yaml` 
    ```yaml
