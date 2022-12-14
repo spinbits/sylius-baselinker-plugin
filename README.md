@@ -1,6 +1,9 @@
 [![image](./docs/img/spinbits.jpg)](https://spinbits.io)
 # Sylius Baselinker Plugin
 
+## Need help ?
+Drop us a message hello@spinbits.io
+
 ## Overview
 
 This plugin is used to connect Sylius and Baselinker. Baselinker can be used as an integrator and management platform for your e-commerce.
