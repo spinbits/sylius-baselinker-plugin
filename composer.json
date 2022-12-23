@@ -7,6 +7,11 @@
         "sylius-plugin"
     ],
     "license": "MIT",
+    "authors": [  {
+            "name": "Spinbits",
+            "homepage": "https://spinbits.io"
+        }
+    ],
     "require": {
         "php": "^7.4 || ^8.0",
         "ext-json": "*",
