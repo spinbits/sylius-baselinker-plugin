@@ -28,7 +28,7 @@
         <service id="Spinbits\SyliusBaselinkerPlugin\Mapper\ListProductMapper" autowire="true" autoconfigure="true"/>
 
         <service id="Spinbits\SyliusBaselinkerPlugin\RequestHandler">
-            <argument key="$password" type="string">%env(BASELINKER_PASSWORD)%</argument>
+            <argument key="$channelContext" type="service" id="Sylius\Component\Channel\Context\ChannelContextInterface"/>
             <call method="registerHandler">
                 <argument type="string">FileVersion</argument>
                 <argument type="service" id="Spinbits\SyliusBaselinkerPlugin\Handler\FileVersionActionHandler" />
